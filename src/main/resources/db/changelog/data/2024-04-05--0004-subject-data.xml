@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="2024-04-05--0004-subject-data" author="PinkyZeus" context="test" runOnChange="true" >
+        <!-- Наполняем данными из csv -->
+        <loadData tableName="subject" file="db/changelog/data/csv/2024-04-05--0004-subject-data.csv"
+                  separator=";"
+                  quotchar='"'
+                  encoding="UTF-8"/>
+
+    </changeSet>
+</databaseChangeLog>

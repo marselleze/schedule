@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-04-05--0001-batch" author="PinkyZeus">
+        <preConditions>
+            <not>
+                <tableExists tableName="batch"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="batch">
+            <column name="id"
+                    type="NUMERIC(19, 0)"
+                    autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                />
+
+            </column>
+
+            <column name="number"
+                    type="NUMERIC(5, 0)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="direction"
+                    type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="profile"
+                    type="VARCHAR(45)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+</databaseChangeLog>

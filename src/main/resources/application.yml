@@ -1,0 +1,48 @@
+server:
+  port: 9000
+
+# Конфигурационный файл
+
+spring:
+
+  # Подключение к H2 бд через jdbc
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+  # Включение консоли
+  h2:
+    console:
+      #enabled: false
+      enabled: true
+
+  # Включение liquibase и установка основного файла
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.xml
+
+  jpa:
+    generate-ddl: false
+
+    hibernate:
+      ddl: none
+
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          articles-client:
+            registration:
+              client-id: articles-client
+              client-secret: "{noop}secret"
+              client-name: Articles Client
+              client-authentication-methods:
+                - client_secret_basic
+              authorization-grant-types:
+                - authorization_code
+                - refresh_token
+              redirect-uris:
+                - http://127.0.0.1:8080/login/oauth2/code/articles-client-oidc
+                - http://127.0.0.1:8080/authorized
+              scopes:
+                - openid
+                - articles.read

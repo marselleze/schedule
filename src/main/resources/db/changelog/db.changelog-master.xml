@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <include file="db/changelog/1.0/2024-04-05--0001-batch.xml"/>
+    <include file="db/changelog/1.0/2024-04-05--0002-subgroup.xml"/>
+    <include file="db/changelog/1.0/2024-04-05--0003-teacher.xml"/>
+    <include file="db/changelog/1.0/2024-04-05--0004-subject.xml"/>
+    <include file="db/changelog/1.0/2024-04-05--0005-schedule.xml"/>
+
+    <include file="/db/changelog/data/2024-04-05--0001-batch-data.xml"/>
+    <include file="db/changelog/data/2024-04-05--0002-subgroup-data.xml"/>
+    <include file="db/changelog/data/2024-04-05--0003-teacher-data.xml"/>
+    <include file="db/changelog/data/2024-04-05--0004-subject-data.xml"/>
+    <include file="db/changelog/data/2024-04-05--0005-schedule-data.xml"/>
+
+</databaseChangeLog>  

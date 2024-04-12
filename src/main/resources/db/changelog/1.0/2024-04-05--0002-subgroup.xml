@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-04-05--0002-subgroup" author="PinkyZeus">
+        <preConditions>
+            <not>
+                <tableExists tableName="subgroup"/>
+            </not>
+        </preConditions>
+
+
+        <createTable tableName="subgroup">
+            <column name="id"
+                    type="NUMERIC(19, 0)"
+                    autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             unique="true"/>
+            </column>
+            <column name="number"
+                    type="NUMERIC(19, 0)"
+                    autoIncrement="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id"
+                    type="NUMERIC(19, 0)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="subgroup" baseColumnNames="group_id" constraintName="fk_subgroup_batch"
+                                 referencedTableName="batch"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+</databaseChangeLog>
