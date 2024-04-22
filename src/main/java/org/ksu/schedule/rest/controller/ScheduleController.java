@@ -25,10 +25,10 @@ public class ScheduleController {
 
     }
 
-    @GetMapping("/schedule/subgroup/{subgroup_number}")
-    public List<ScheduleDto> getSchedulesBySubgroup(@PathVariable int subgroup_number) {
+    @GetMapping("/schedule/subgroup/{subgroup_id}")
+    public List<ScheduleDto> getSchedulesBySubgroup(@PathVariable int subgroup_id) {
 
-        return scheduleService.getBySubgroupId(subgroup_number)
+        return scheduleService.getBySubgroupId(subgroup_id)
                 .stream()
                 .map(ScheduleDto::toDto)
                 .collect(Collectors.toList());
@@ -51,4 +51,5 @@ public class ScheduleController {
                 .map(ScheduleDto::toDto)
                 .collect(Collectors.toList());
     }
+
 }

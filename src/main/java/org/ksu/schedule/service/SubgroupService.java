@@ -9,13 +9,13 @@ public interface SubgroupService {
 
     Subgroup insert(
             int id,
-            int number,
+            String number,
             int group_id
     );
 
-    Subgroup update(int id, int number, int group_id);
+    Subgroup update(int id, String number, int group_id);
 
-    Subgroup getByNumber(int number);
+    Subgroup getByNumber(String number);
 
     List<Subgroup> getByGroupId(int group_id);
 

@@ -11,6 +11,5 @@
                   separator=";"
                   quotchar='"'
                   encoding="UTF-8"/>
-
     </changeSet>
 </databaseChangeLog>

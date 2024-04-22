@@ -10,7 +10,9 @@
     <include file="db/changelog/1.0/2024-04-05--0004-subject.xml"/>
     <include file="db/changelog/1.0/2024-04-05--0005-schedule.xml"/>
 
-    <include file="/db/changelog/data/2024-04-05--0001-batch-data.xml"/>
+
+
+    <include file="db/changelog/data/2024-04-05--0001-batch-data.xml"/>
     <include file="db/changelog/data/2024-04-05--0002-subgroup-data.xml"/>
     <include file="db/changelog/data/2024-04-05--0003-teacher-data.xml"/>
     <include file="db/changelog/data/2024-04-05--0004-subject-data.xml"/>

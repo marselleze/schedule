@@ -15,7 +15,7 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @GetMapping("/teachers")
+    @GetMapping("/teacher")
     public List<TeacherDto> getAllTeachers() {
         return teacherService.getAll()
                 .stream()
@@ -23,7 +23,7 @@ public class TeacherController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/teachers")
+    @PostMapping("/teacher")
     public TeacherDto insertTeacher(@RequestBody TeacherDto teacherDto) {
 
         Teacher teacher = teacherService.insert(TeacherDto.toDomain(teacherDto));
@@ -31,7 +31,7 @@ public class TeacherController {
         return TeacherDto.toDto(teacher);
     }
 
-    @PutMapping("/teachers/{id}")
+    @PutMapping("/teacher/{id}")
     public TeacherDto updateTeacher(@PathVariable int id, @RequestParam String name, @RequestParam String post) {
 
         Teacher teacher = teacherService.update(id, name, post);
@@ -39,12 +39,12 @@ public class TeacherController {
         return TeacherDto.toDto(teacher);
     }
 
-    @DeleteMapping("/teachers/{id}")
+    @DeleteMapping("/teacher/{id}")
     public void deleteTeacher(@PathVariable int id) {
         teacherService.deleteById(id);
     }
 
-    @GetMapping("/teachers/post/{post}")
+    @GetMapping("/teacher/post/{post}")
     public List<TeacherDto> getTeachersByPost(@PathVariable String post){
 
         return teacherService.getByPost(post)
@@ -53,7 +53,7 @@ public class TeacherController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/teachers/name/{name}")
+    @GetMapping("/teacher/name/{name}")
     public TeacherDto getTeachersByName(@PathVariable String name){
 
         Teacher teacher = teacherService.getByName(name);

@@ -15,7 +15,7 @@ import org.ksu.schedule.repository.GroupRepository;
 public class SubgroupDto {
     private int id;
 
-    private int number;
+    private String number;
 
     private GroupDto groupDto;
 

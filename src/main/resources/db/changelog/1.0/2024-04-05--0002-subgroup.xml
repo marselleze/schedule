@@ -22,19 +22,19 @@
                              unique="true"/>
             </column>
             <column name="number"
-                    type="NUMERIC(19, 0)"
-                    autoIncrement="true">
+                    type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
             <column name="group_id"
                     type="NUMERIC(19, 0)">
-                <constraints nullable="false"/>
+                <constraints nullable="false"
+                             deleteCascade="true"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseTableName="subgroup" baseColumnNames="group_id" constraintName="fk_subgroup_batch"
                                  referencedTableName="batch"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id" deleteCascade="true"/>
 
     </changeSet>
 

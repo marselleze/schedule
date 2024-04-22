@@ -6,6 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="2024-04-05--0005-schedule" author="PinkyZeus">
+
         <preConditions>
             <not>
                 <tableExists tableName="schedule"/>
@@ -50,9 +51,9 @@
                              deleteCascade="true"/>
             </column>
             <column name="day_week"
-                    type="VARCHAR(20)">
+                    type="VARCHAR(255)">
                 <constraints nullable="false"
-                             unique="true"/>
+                             unique="false"/>
             </column>
             <column name="time_Start"
                     type="TIME">

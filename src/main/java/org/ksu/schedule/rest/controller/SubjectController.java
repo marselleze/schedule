@@ -15,7 +15,7 @@ public class SubjectController {
 
     private final SubjectService subjectService;
 
-    @GetMapping("/subjects")
+    @GetMapping("/subject")
     public List<SubjectDto> getAllSubjects() {
         return subjectService.getAll()
                 .stream()
@@ -23,7 +23,7 @@ public class SubjectController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/subjects")
+    @PostMapping("/subject")
     public SubjectDto insertSubject(@RequestBody SubjectDto subjectDto) {
 
         Subject subject = subjectService.insert(SubjectDto.toDomain(subjectDto));
@@ -31,7 +31,7 @@ public class SubjectController {
         return SubjectDto.toDto(subject);
     }
 
-    @PutMapping("/subjects/{id}")
+    @PutMapping("/subject/{id}")
     public SubjectDto updateSubject(@PathVariable int id, @RequestParam String name, @RequestParam String type) {
 
         Subject subject = subjectService.update(id, name, type);
@@ -39,12 +39,12 @@ public class SubjectController {
         return SubjectDto.toDto(subject);
     }
 
-    @DeleteMapping("/subjects/{id}")
+    @DeleteMapping("/subject/{id}")
     public void deleteSubject(@PathVariable int id) {
         subjectService.deleteById(id);
     }
 
-    @GetMapping("/subjects/name/{name}")
+    @GetMapping("/subject/name/{name}")
     public List<SubjectDto> getSubjectByName(@PathVariable String name) {
 
         return subjectService.getByName(name)
@@ -54,7 +54,7 @@ public class SubjectController {
 
     }
 
-    @GetMapping("/subjects/type/{type}")
+    @GetMapping("/subject/type/{type}")
     public List<SubjectDto> getSubjectByType(@PathVariable String type) {
         return subjectService.getByType(type)
                 .stream()

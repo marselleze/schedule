@@ -11,5 +11,5 @@ public interface SubgroupRepository extends JpaRepository<Subgroup, Integer> {
 
     void deleteByGroupId(int group_id);
 
-    Subgroup findByNumber(int number);
+    Subgroup findByNumber(String number);
 }

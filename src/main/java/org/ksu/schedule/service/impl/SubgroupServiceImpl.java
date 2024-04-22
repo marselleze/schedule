@@ -19,7 +19,7 @@ public class SubgroupServiceImpl implements SubgroupService {
     private final GroupRepository groupRepository;
 
     @Override
-    public Subgroup insert(int id, int number, int group_id) {
+    public Subgroup insert(int id, String number, int group_id) {
 
         Group groupId = groupRepository.findById(group_id).orElse(null);
 
@@ -36,7 +36,7 @@ public class SubgroupServiceImpl implements SubgroupService {
     }
 
     @Override
-    public Subgroup update(int id, int number, int group_id) {
+    public Subgroup update(int id, String number, int group_id) {
         Group groupId = groupRepository.findById(group_id).orElseThrow();
 
         return subgroupRepository.saveAndFlush(
@@ -50,7 +50,7 @@ public class SubgroupServiceImpl implements SubgroupService {
 
 
     @Override
-    public Subgroup getByNumber(int number) {
+    public Subgroup getByNumber(String number) {
         return subgroupRepository.findByNumber(number);
     }
 

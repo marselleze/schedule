@@ -1,2 +1,2 @@
-parity;subgroup_id;subject_id;teacher_id;day_Week;time_Start;time_End;number;classroom
+parity;subgroup_id;subject_id;teacher_id;day_week;time_Start;time_End;number;classroom
 Числитель;1;1;1;Понедельник;08:00:00;09:00:00;1;202

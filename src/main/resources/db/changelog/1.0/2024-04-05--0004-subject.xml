@@ -23,13 +23,13 @@
             </column>
 
             <column name="name"
-                    type="VARCHAR(100)">
+                    type="VARCHAR(255)">
                 <constraints nullable="false"
                              unique="false"/>
             </column>
 
             <column name="type"
-                    type="VARCHAR(45)">
+                    type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

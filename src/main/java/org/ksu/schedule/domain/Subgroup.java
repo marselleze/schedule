@@ -19,7 +19,7 @@ public class Subgroup {
     private int id;
 
     @Column(name = "number")
-    private int number;
+    private String number;
 
     @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")

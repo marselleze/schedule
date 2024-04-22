@@ -1,10 +1,9 @@
 package org.ksu.schedule;
 
-import org.h2.tools.Console;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
+import org.h2.tools.Console;
 import java.sql.SQLException;
 
 

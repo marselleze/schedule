@@ -18,27 +18,28 @@
                     autoIncrement="true">
                 <constraints primaryKey="true"
                              nullable="false"
+                             unique="true"
                 />
 
             </column>
 
             <column name="number"
                     type="NUMERIC(5, 0)">
-                <constraints nullable="false"/>
+                <constraints nullable="false"
+                             unique="true"/>
             </column>
 
             <column name="direction"
-                    type="VARCHAR(100)">
+                    type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
 
             <column name="profile"
-                    type="VARCHAR(45)">
+                    type="VARCHAR(255)">
                 <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>
-
 
 
 </databaseChangeLog>
