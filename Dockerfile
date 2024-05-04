@@ -9,6 +9,6 @@ RUN apk update \
 RUN apk --update add nodejs npm
 RUN npm i -g redoc-cli
 
-COPY *.app /app.jar
+COPY target/*.jar /app.jar
 
 CMD ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar ${@}"]
