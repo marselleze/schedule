@@ -14,12 +14,6 @@ public class ScheduleApplication {
 
         ConfigurableApplicationContext context = SpringApplication.run(ScheduleApplication.class, args);
 
-//        try {
-//            //Консоль для визуализации бд в браузере
-//            Console.main(args);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
