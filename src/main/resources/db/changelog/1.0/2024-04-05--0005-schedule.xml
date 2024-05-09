@@ -5,7 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="2024-04-05--0005-schedule" author="PinkyZeus">
+    <changeSet id="2024-04-05--0005-schedule" author="PinkyZeus" >
+        <validCheckSum>ANY</validCheckSum>
 
         <preConditions>
             <not>
@@ -68,7 +69,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="classroom"
-                    type="NUMERIC(4, 0)">
+                    type="VARCHAR(4)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

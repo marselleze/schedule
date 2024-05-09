@@ -33,7 +33,7 @@ public class ScheduleDto {
 
     private int number;
 
-    private int classroom;
+    private String classroom;
 
 
 

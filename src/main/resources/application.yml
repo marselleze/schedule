@@ -1,12 +1,15 @@
 # Конфигурационный файл
 server:
-  port: 8088
-  address: 92.255.110.133 # IP адрес сервера
+  #port: 8081
+  #address: 188.225.24.65 # IP адрес сервера
+  tomcat:
+    remoteip:
+      host-header: 24schedule.ru
 spring:
 
   # Подключение к H2 бд через jdbc
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:/data/db
 
   # Включение liquibase и установка основного файла
   liquibase:
@@ -18,6 +21,19 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  servlet:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
+
+  http:
+    multipart:
+      enabled: true
+
 
 
 connection:

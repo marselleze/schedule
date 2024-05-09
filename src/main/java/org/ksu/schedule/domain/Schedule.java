@@ -46,6 +46,6 @@ public class Schedule {
     private int number;
 
     @Column(name = "classroom")
-    private int classroom;
+    private String classroom;
 
 }

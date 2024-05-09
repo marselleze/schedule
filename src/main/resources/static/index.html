@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отправить Excel файл</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Голубой цвет фона */
+            color: #333; /* Цвет текста */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #uploadForm {
+            background-color: #fff; /* Белый цвет фона формы */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
+            max-width: 90%;
+            width: 300px; /* Ширина формы на десктопах */
+        }
+
+        h2 {
+            color: #4169e1; /* Синий цвет заголовка */
+            text-align: center;
+            padding: 20px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        button {
+            background-color: #4169e1; /* Синий цвет кнопки */
+            color: #fff; /* Белый цвет текста кнопки */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #1e90ff; /* Более темный синий цвет при наведении */
+        }
+    </style>
+</head>
+<body>
+<div id="uploadForm">
+    <h2>Отправить Excel файл</h2>
+    <form action="/import/import-excel" method="post" enctype="multipart/form-data" onsubmit="return submitForm()">
+        <input type="file" name="files" id="files" accept=".xls,.xlsx" multiple>
+        <button type="submit" name="submit">Отправить</button>
+    </form>
+</div>
+
+<script>
+    function submitForm() {
+        var files = document.getElementById("files").files;
+        if (files.length === 0) {
+            alert("Пожалуйста, выберите файл для загрузки.");
+            return false;
+        }
+        alert("Файл(ы) успешно отправлен(ы)!");
+        window.location.href = "/";
+        return true;
+    }
+</script>
+</body>
+</html>
