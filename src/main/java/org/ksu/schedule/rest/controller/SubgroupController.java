@@ -39,17 +39,17 @@ public class SubgroupController {
     }
 
     @PostMapping("/subgroup")
-    public SubgroupDto insertSubgroup(@RequestParam int id, @RequestParam String number, @RequestParam int group_id) {
+    public SubgroupDto insertSubgroup(@RequestParam int id, @RequestParam String number, @RequestParam String group_number) {
         
-        Subgroup subgroup = subgroupService.insert(id, number, group_id);
+        Subgroup subgroup = subgroupService.insert(id, number, group_number);
 
         return SubgroupDto.toDto(subgroup);
     }
 
     @PutMapping("/subgroup/{id}")
-    public SubgroupDto updateSubgroup(@PathVariable int id, @RequestParam String number, @RequestParam int group_id) {
+    public SubgroupDto updateSubgroup(@PathVariable int id, @RequestParam String number, @RequestParam String group_number) {
 
-        Subgroup subgroup = subgroupService.update(id, number, group_id);
+        Subgroup subgroup = subgroupService.update(id, number, group_number);
 
         return SubgroupDto.toDto(subgroup);
     }

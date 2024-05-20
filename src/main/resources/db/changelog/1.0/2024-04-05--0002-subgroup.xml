@@ -6,6 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="2024-04-05--0002-subgroup" author="PinkyZeus">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions>
             <not>
                 <tableExists tableName="subgroup"/>
@@ -21,7 +22,7 @@
                              nullable="false"
                              unique="true"/>
             </column>
-            <column name="number"
+            <column name="sub_number"
                     type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>

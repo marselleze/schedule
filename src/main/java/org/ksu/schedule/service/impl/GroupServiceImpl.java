@@ -39,7 +39,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group getByNumber(int number) {
+    public Group getByNumber(String number) {
         return groupRepository.findByNumber(number);
     }
 
@@ -54,7 +54,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group updateGroup(int id, int number, String direction, String profile) {
+    public Group updateGroup(int id, String number, String direction, String profile) {
 
         Group group = Group.builder()
                 .id(id)

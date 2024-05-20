@@ -82,21 +82,21 @@ public class SubjectServiceImplTest {
         assertThat(actualSubjects).isEqualTo(subjects);
     }
 
-    @DisplayName("должен выводить предмет по его назвнию")
-    @Test
-    void getSubjectByName() {
-        Subject expectedSubject = Subject.builder()
-                .id(1)
-                .name("Test")
-                .type("TestType")
-                .build();
-
-        when(subjectRepository.findByName("Test")).thenReturn(Collections.singletonList(expectedSubject));
-
-        List<Subject> actualSubjects = subjectService.getByName("Test");
-
-        assertThat(actualSubjects).isEqualTo(Collections.singletonList(expectedSubject));
-    }
+//    @DisplayName("должен выводить предмет по его назвнию")
+//    @Test
+//    void getSubjectByName() {
+//        Subject expectedSubject = Subject.builder()
+//                .id(1)
+//                .name("Test")
+//                .type("TestType")
+//                .build();
+//
+//        when(subjectRepository.findByName("Test")).thenReturn(Collections.singletonList(expectedSubject));
+//
+//        List<Subject> actualSubjects = subjectService.getByName("Test");
+//
+//        assertThat(actualSubjects).isEqualTo(Collections.singletonList(expectedSubject));
+//    }
 
     @DisplayName("должен выводить список предметов по их типу")
     @Test

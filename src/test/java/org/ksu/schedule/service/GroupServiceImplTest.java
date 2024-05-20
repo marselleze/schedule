@@ -88,13 +88,13 @@ public class GroupServiceImplTest {
     @Test
     void shouldGetGroupByNumber() {
         Group expectedGroup = Group.builder()
-                .number(413)
+                .number("413")
                 .direction("МОАИС")
                 .profile("1")
                 .build();
-        when(groupRepository.findByNumber(413)).thenReturn(expectedGroup);
+        when(groupRepository.findByNumber("413")).thenReturn(expectedGroup);
 
-        Group actualGroup = groupService.getByNumber(413);
+        Group actualGroup = groupService.getByNumber("413");
 
         assertThat(expectedGroup).isEqualTo(actualGroup);
     }
@@ -103,7 +103,7 @@ public class GroupServiceImplTest {
     @Test
     void shouldGetGroupByDirection() {
         Group expectedGroups = Group.builder()
-                .number(678)
+                .number("678")
                 .direction("IVT")
                 .profile("Прикладной ии")
                 .build();

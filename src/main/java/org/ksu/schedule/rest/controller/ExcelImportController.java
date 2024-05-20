@@ -1,7 +1,6 @@
 package org.ksu.schedule.rest.controller;
 
-import lombok.AllArgsConstructor;
-import org.ksu.schedule.service.GroupImportService;
+import org.ksu.schedule.service.ExcelImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,16 +12,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/import")
-public class GroupImportController {
+public class ExcelImportController {
 
     @Autowired
-    private GroupImportService groupImportService;
+    private ExcelImportService excelImportService;
 
     @PostMapping(path = "/import-excel")
     public void importExcelToDatabase(
             @RequestPart(required = true) List<MultipartFile> files) {
 
-        groupImportService.importExcelToGroups(files);
+        excelImportService.importExcel(files);
 
     }
 

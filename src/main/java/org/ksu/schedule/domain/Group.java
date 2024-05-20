@@ -21,7 +21,7 @@ public class Group {
     private int id;
 
     @Column(name = "number")
-    private int number;
+    private String number;
 
     //@OneToMany(mappedBy = "group")
     //private List<Subgroup> subgroups;

@@ -9,7 +9,7 @@ spring:
 
   # Подключение к H2 бд через jdbc
   datasource:
-    url: jdbc:h2:file:/data/db
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
 
   # Включение liquibase и установка основного файла
   liquibase:
@@ -19,7 +19,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: true
   mvc:
     hiddenmethod:

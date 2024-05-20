@@ -1,10 +1,7 @@
 package org.ksu.schedule.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -12,16 +9,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "schedule")
-public class Schedule {
+public class Schedule{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "parity")
     private String parity;
 
-    @OneToOne(targetEntity = Subgroup.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Subgroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "subgroup_id")
     private Subgroup subgroup;
 
@@ -42,10 +39,29 @@ public class Schedule {
     @Column(name = "time_End")
     private String timeEnd;
 
-    @Column(name = "number")
-    private int number;
-
     @Column(name = "classroom")
     private String classroom;
 
+    public void setDay(String day) {
+        this.dayWeek = day;
+    }
+
+    public void setStartTime(String timeStart) {
+        this.timeStart = timeStart;
+    }
+
+    public void setEndTime(String endTime) {
+        this.timeEnd = endTime;
+    }
+
+    public void setWeekView(String weekView) {
+        this.parity = weekView;
+    }
+
+
+
+
+    public Schedule build() {
+        return new Schedule(this.id, this.parity, this.subgroup, this.subject, this.teacher, this.dayWeek, this.timeStart, this.timeEnd, this.classroom);
+    }
 }

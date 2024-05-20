@@ -10,10 +10,10 @@ public interface SubgroupService {
     Subgroup insert(
             int id,
             String number,
-            int group_id
+            String group_number
     );
 
-    Subgroup update(int id, String number, int group_id);
+    Subgroup update(int id, String number, String group_number);
 
     Subgroup getByNumber(String number);
 

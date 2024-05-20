@@ -17,6 +17,12 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
     List<Schedule> findByParity(String parity);
 
+    void deleteBySubjectId(int subject_id);
+
+    void deleteByTeacherId(int teacher_id);
+
+    void deleteBySubgroupId(int subgroup_id);
+
     //@Query("select t.id from Teacher t where t.name = :name")
     //Schedule findByTeacherName(@Param("id")int id);
 }

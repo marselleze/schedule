@@ -17,7 +17,7 @@ public class GroupDto {
 
     private int id;
 
-    private int number;
+    private String number;
 
     private String direction;
 

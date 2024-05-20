@@ -31,8 +31,6 @@ public class ScheduleDto {
 
     private String timeEnd;
 
-    private int number;
-
     private String classroom;
 
 
@@ -50,11 +48,24 @@ public class ScheduleDto {
                 schedule.getDayWeek(),
                 schedule.getTimeStart(),
                 schedule.getTimeEnd(),
-                schedule.getNumber(),
                 schedule.getClassroom()
         );
 
 
+    }
+
+    public static Schedule toDomain(ScheduleDto scheduleDto) {
+        return new Schedule(
+                scheduleDto.getId(),
+                scheduleDto.getParity(),
+                SubgroupDto.toDomain(scheduleDto.getSubgroupDto()),
+                SubjectDto.toDomain(scheduleDto.getSubjectDto()),
+                TeacherDto.toDomain(scheduleDto.getTeacherDto()),
+                scheduleDto.getDayWeek(),
+                scheduleDto.getTimeStart(),
+                scheduleDto.getTimeEnd(),
+                scheduleDto.getClassroom()
+        );
     }
 
 

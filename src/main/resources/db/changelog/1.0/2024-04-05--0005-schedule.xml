@@ -31,25 +31,16 @@
 
             <column name="subgroup_id"
                     type="NUMERIC(19, 0)">
-                <constraints nullable="false"
-                             foreignKeyName="fk_schedule_subgroup"
-                             references="subgroup(id)"
-                             deleteCascade="true"/>
+                <constraints nullable="false"/>
             </column>
             
             <column name="subject_id"
-                    type="NUMERIC(100, 0)">
-                <constraints nullable="false"
-                             foreignKeyName="fk_schedule_subject"
-                             references="subject(id)"
-                             deleteCascade="true"/>
+                    type="NUMERIC(19, 0)">
+                <constraints nullable="false"/>
             </column>
             <column name="teacher_id"
-                    type="NUMERIC(100, 0)">
-                <constraints nullable="false"
-                             foreignKeyName="fk_schedule_teacher"
-                             references="teacher(id)"
-                             deleteCascade="true"/>
+                    type="NUMERIC(19, 0)">
+                <constraints nullable="false"/>
             </column>
             <column name="day_week"
                     type="VARCHAR(255)">
@@ -64,15 +55,22 @@
                     type="TIME">
                 <constraints nullable="false"/>
             </column>
-            <column name="number"
-                    type="NUMERIC(2, 0)">
-                <constraints nullable="false"/>
-            </column>
             <column name="classroom"
-                    type="VARCHAR(4)">
+                    type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addForeignKeyConstraint baseTableName="schedule" baseColumnNames="subgroup_id" constraintName="fk_schedule_subgroup"
+                                 referencedTableName="subgroup"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+        <addForeignKeyConstraint baseTableName="schedule" baseColumnNames="subject_id" constraintName="fk_schedule_subject"
+                                 referencedTableName="subject"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+        <addForeignKeyConstraint baseTableName="schedule" baseColumnNames="teacher_id" constraintName="fk_schedule_teacher"
+                                 referencedTableName="teacher"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+
     </changeSet>
 
 

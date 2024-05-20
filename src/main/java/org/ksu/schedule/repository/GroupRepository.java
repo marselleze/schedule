@@ -1,11 +1,13 @@
 package org.ksu.schedule.repository;
 
 import org.ksu.schedule.domain.Group;
+import org.ksu.schedule.rest.dto.SubgroupDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+
 
 public interface GroupRepository extends JpaRepository<Group, Integer> {
     // Метод кастомных запросов
@@ -21,12 +23,15 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
     List<Group> findByDirection(String direction);
     List<Group> findByProfile(String profile);
 
-    Group findByNumber(int number);
+    Integer findGroupIdByNumber(String number);
+
+    Group findByNumber(String number);
 
     //@Query("select d from Subgroup d where d.id = :subgroups")
     //Group findBySubgroupId(@Param("subgroups") int subgroups);;
 
-    void deleteByNumber(int number);
+    void deleteByNumber(String number);
+
 
 
 

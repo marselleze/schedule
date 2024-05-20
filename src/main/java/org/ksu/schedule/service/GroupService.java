@@ -13,13 +13,13 @@ public interface GroupService {
 
     void deleteById (int id);
 
-    Group getByNumber(int number);
+    Group getByNumber(String number);
 
     List<Group> getByDirection(String direction);
 
     List<Group> getByProfile(String profile);
 
-    Group updateGroup(int id, int number, String direction, String profile);
+    Group updateGroup(int id, String number, String direction, String profile);
 
     List<Group> getAll();
 }

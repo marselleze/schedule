@@ -33,7 +33,7 @@ public class GroupController {
 
     @PutMapping("/batches/{id}")
     public GroupDto updateGroup(@PathVariable int id,
-                                @RequestParam int number,
+                                @RequestParam String number,
                                 @RequestParam String direction,
                                 @RequestParam String profile) {
         Group group = groupService.updateGroup(id, number, direction, profile);

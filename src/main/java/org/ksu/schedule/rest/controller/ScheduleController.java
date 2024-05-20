@@ -52,4 +52,20 @@ public class ScheduleController {
                 .collect(Collectors.toList());
     }
 
+    @PostMapping("/schedule")
+    public ScheduleDto insert(@RequestParam int id,
+                              @RequestParam String parity,
+                              @RequestParam int subgroup_id,
+                              @RequestParam int subject_id,
+                              @RequestParam int teacher_id,
+                              @RequestParam String dayWeek,
+                              @RequestParam String timeStart,
+                              @RequestParam String timeEnd,
+                              @RequestParam String classroom) {
+
+        Schedule schedule = scheduleService.insert(id, parity, subgroup_id, subject_id, teacher_id, dayWeek, timeStart, timeEnd, classroom);
+
+        return ScheduleDto.toDto(schedule);
+    }
+
 }

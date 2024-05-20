@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface GroupImportService {
+public interface ExcelImportService{
 
-    void importExcelToGroups(List<MultipartFile> files);
+    void importExcel(List<MultipartFile> files);
 }

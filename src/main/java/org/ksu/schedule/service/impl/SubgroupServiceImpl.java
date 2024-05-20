@@ -19,9 +19,9 @@ public class SubgroupServiceImpl implements SubgroupService {
     private final GroupRepository groupRepository;
 
     @Override
-    public Subgroup insert(int id, String number, int group_id) {
+    public Subgroup insert(int id, String number, String group_number) {
 
-        Group groupId = groupRepository.findById(group_id).orElse(null);
+        Group groupId = groupRepository.findByNumber(group_number);
 
         if (groupId == null){
             return null; //TODO: throw exception
@@ -36,8 +36,8 @@ public class SubgroupServiceImpl implements SubgroupService {
     }
 
     @Override
-    public Subgroup update(int id, String number, int group_id) {
-        Group groupId = groupRepository.findById(group_id).orElseThrow();
+    public Subgroup update(int id, String number, String group_number) {
+        Group groupId = groupRepository.findByNumber(group_number);
 
         return subgroupRepository.saveAndFlush(
                 Subgroup.builder()
