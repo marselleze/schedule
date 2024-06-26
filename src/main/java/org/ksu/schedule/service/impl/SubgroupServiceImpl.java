@@ -73,4 +73,9 @@ public class SubgroupServiceImpl implements SubgroupService {
     public List<Subgroup> getAll() {
         return subgroupRepository.findAll();
     }
+
+    @Override
+    public List<Subgroup> getByGroupNumber(String groupNumber) {
+        return subgroupRepository.findByGroupNumber(groupNumber);
+    }
 }

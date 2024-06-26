@@ -16,7 +16,7 @@
 
         <createTable tableName="batch">
             <column name="id"
-                    type="NUMERIC(19, 0)"
+                    type="INTEGER(19, 0)"
                     autoIncrement="true">
                 <constraints primaryKey="true"
                              nullable="false"

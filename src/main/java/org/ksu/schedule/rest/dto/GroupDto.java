@@ -8,6 +8,7 @@ import org.ksu.schedule.domain.Group;
 import org.ksu.schedule.domain.Subgroup;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +24,7 @@ public class GroupDto {
 
     private String profile;
 
+    
     public static GroupDto toDto(Group group) {
         return new GroupDto(
                 group.getId(),

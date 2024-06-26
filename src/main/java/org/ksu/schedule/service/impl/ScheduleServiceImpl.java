@@ -44,6 +44,25 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public List<Schedule> getBySubgroupNumber(String subgroup_number) {
+        Group group  = groupRepository.findById(subgroupRepository.findByNumber(subgroup_number).getId()).orElse(null);
+        if(group  == null){
+            group = Group.builder()
+                    .build();
+        }
+
+        Subgroup subgroup  = subgroupRepository.findById(subgroupRepository.findByNumber(subgroup_number).getId()).orElse(null);
+        if(subgroup  == null){
+            subgroup = Subgroup.builder()
+                    .number(subgroup_number)
+                    .group(groupRepository.findById(subgroupRepository.findByNumber(subgroup_number).getId()).orElse(null))
+                    .build();
+        }
+
+        return scheduleRepository.findBySubgroupNumber(subgroup_number);
+    }
+
+    @Override
     public List<Schedule> getByTeacherId(int teacher_id) {
 
         return scheduleRepository.findByTeacherId(teacher_id);
@@ -108,4 +127,31 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<Schedule> getAll() {
         return scheduleRepository.findAll();
     }
+
+    @Override
+    public List<Schedule> getByTeacherName(String teacherName) {
+        return scheduleRepository.findByTeacherName(teacherName);
+    }
+
+    @Override
+    public List<Schedule> getBySubjectName(String subjectName) {
+        return scheduleRepository.findBySubjectName(subjectName);
+    }
+
+    @Override
+    public List<Schedule> getBySubgroupNumberAndSubjectType(String subgroup_number, String type) {
+        return scheduleRepository.findBySubgroupNumberAndSubjectType(subgroup_number, type);
+    }
+
+    @Override
+    public List<Schedule> getBySubgroupNumberAndTeacherName(String subgroup_number, String teacherName) {
+        return scheduleRepository.findBySubgroupNumberAndTeacherName(subgroup_number, teacherName);
+    }
+
+    @Override
+    public List<Schedule> getBySubgroupNumberAndSubjectName(String subgroup_number, String subjectName) {
+        return scheduleRepository.findBySubgroupNumberAndSubjectName(subgroup_number, subjectName);
+    }
+
+
 }

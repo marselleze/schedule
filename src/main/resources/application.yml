@@ -1,15 +1,21 @@
 # Конфигурационный файл
 server:
-  #port: 8081
+  port: 8081
   #address: 188.225.24.65 # IP адрес сервера
-  tomcat:
-    remoteip:
-      host-header: 24schedule.ru
 spring:
 
-  # Подключение к H2 бд через jdbc
+
+  #datasource:
+    #url: jdbc:postgresql://localhost:5432/schedule
+    #username: root
+    #password: zttJd4uDdm2Xa.
+
+
+  #Подключение к H2 бд через jdbc
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+
 
   # Включение liquibase и установка основного файла
   liquibase:
@@ -19,7 +25,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
   mvc:
     hiddenmethod:
@@ -35,14 +41,14 @@ spring:
       enabled: true
 
 
+#connection:
+  #names:
+    #- test
+    #- live
+  #addresses:
+    #test: https://localhost:8088
+    #live: https://24schedule.ru
 
-connection:
-  names:
-    - test
-    - live
-  addresses:
-    test: http://localhost:8088
-    live: https://24schedule.ru
 
 
 

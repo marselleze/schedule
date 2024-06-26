@@ -28,9 +28,19 @@ public class SubgroupController {
         return subgroupDtoList;
     }
 
-    @GetMapping("/subgroup/{group_id}")
+    @GetMapping("/subgroup/groupId/{group_id}")
     public List<SubgroupDto> getSubgroupsByGroupId(@PathVariable int group_id) {
         List<SubgroupDto> subgroupDtoList = subgroupService.getByGroupId(group_id)
+                .stream()
+                .map(SubgroupDto::toDto)
+                .toList();
+
+        return subgroupDtoList;
+    }
+
+    @GetMapping("/subgroup/groupNumber/{group_number}")
+    public List<SubgroupDto> getSubgroupsByGroupNumber(@PathVariable String group_number)  {
+        List<SubgroupDto> subgroupDtoList = subgroupService.getByGroupNumber(group_number)
                 .stream()
                 .map(SubgroupDto::toDto)
                 .toList();
@@ -58,6 +68,8 @@ public class SubgroupController {
     public void deleteSubgroup(@PathVariable int id) {
         subgroupService.deleteById(id);
     }
+
+
 
 
 }

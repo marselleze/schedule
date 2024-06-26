@@ -2,6 +2,7 @@ package org.ksu.schedule.service;
 
 import org.ksu.schedule.domain.Schedule;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ScheduleService {
@@ -9,6 +10,8 @@ public interface ScheduleService {
 
 
     List<Schedule> getBySubgroupId(int subgroup_id);
+
+    List<Schedule> getBySubgroupNumber(String subgroup_number);
 
     List<Schedule> getByTeacherId(int teacher_id);
 
@@ -37,4 +40,13 @@ public interface ScheduleService {
 
     List<Schedule> getAll();
 
+    List<Schedule> getByTeacherName(String teacherName);
+
+    List<Schedule> getBySubjectName(String subjectName);
+
+    List<Schedule> getBySubgroupNumberAndSubjectType(String subgroup_number, String type);
+
+    List<Schedule> getBySubgroupNumberAndTeacherName(String subgroup_number, String teacherName);
+
+    List<Schedule> getBySubgroupNumberAndSubjectName(String subgroup_number, String subjectName);
 }

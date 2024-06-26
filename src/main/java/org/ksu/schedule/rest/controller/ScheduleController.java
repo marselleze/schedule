@@ -25,10 +25,19 @@ public class ScheduleController {
 
     }
 
-    @GetMapping("/schedule/subgroup/{subgroup_id}")
+    @GetMapping("/schedule/subgroup/id/{subgroup_id}")
     public List<ScheduleDto> getSchedulesBySubgroup(@PathVariable int subgroup_id) {
 
         return scheduleService.getBySubgroupId(subgroup_id)
+                .stream()
+                .map(ScheduleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/schedule/subgroup/number/{subgroup_number}")
+    public List<ScheduleDto> getSchedulesBySubgroupNumber(@PathVariable String subgroup_number)  {
+
+        return scheduleService.getBySubgroupNumber(subgroup_number)
                 .stream()
                 .map(ScheduleDto::toDto)
                 .collect(Collectors.toList());
@@ -43,6 +52,14 @@ public class ScheduleController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/schedule/teacher/name/{teacher_name}")
+    public List<ScheduleDto> getSchedulesByTeacherName(@PathVariable String teacher_name)  {
+        return scheduleService.getByTeacherName(teacher_name)
+                .stream()
+                .map(ScheduleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/schedule/parity/{parity}")
     public List<ScheduleDto> getSchedulesByParity(@PathVariable String parity) {
 
@@ -50,6 +67,48 @@ public class ScheduleController {
                 .stream()
                 .map(ScheduleDto::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/schedule/subject/{subject_name}")
+    public List<ScheduleDto> getSchedulesBySubject(@PathVariable String subject_name)   {
+        return scheduleService.getBySubjectName(subject_name)
+                .stream()
+                .map(ScheduleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/schedule/filter/subgroup_number{subgroup_number}/type/{type}")
+    public List<ScheduleDto> getSchedulesBySubgroupNumberAndType(@PathVariable("subgroup_number") String subgroup_number,
+                                                                   @PathVariable("type") String type)  {
+        return scheduleService.getBySubgroupNumberAndSubjectType(subgroup_number, type)
+                .stream()
+                .map(ScheduleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/schedule/filter/subgroup_number{subgroup_number}/teacher_name/{teacher_name}")
+    public List<ScheduleDto> getSchedulesBySubgroupNumberAndTeacherName(@PathVariable("subgroup_number") String subgroup_number,
+                                                                        @PathVariable("teacher_name") String teacher_name)   {
+        return scheduleService.getBySubgroupNumberAndSubjectName(subgroup_number, teacher_name)
+                .stream()
+                .map(ScheduleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/schedule/filter/subgroup_number/{subgroup_number}/subject_name/{subject_name}")
+    public List<ScheduleDto> getSchedulesBySubgroupNumberAndSubjectName(@PathVariable("subgroup_number") String subgroup_number,
+                                                                        @PathVariable("subject_name") String subject_name)   {
+        return scheduleService.getBySubgroupNumberAndSubjectName(subgroup_number, subject_name)
+                .stream()
+                .map(ScheduleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/schedule/group/{group_number}")
+
+    @DeleteMapping("/schedule/{id}")
+    public void delete(@PathVariable int id)  {
+        scheduleService.deleteById(id);
     }
 
     @PostMapping("/schedule")

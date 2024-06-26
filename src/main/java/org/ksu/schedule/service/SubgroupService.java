@@ -3,6 +3,7 @@ package org.ksu.schedule.service;
 import org.ksu.schedule.domain.Group;
 import org.ksu.schedule.domain.Subgroup;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface SubgroupService {
@@ -24,5 +25,7 @@ public interface SubgroupService {
     void deleteByGroupId(int group_id);
 
     List<Subgroup> getAll();
+
+    List<Subgroup> getByGroupNumber(String groupNumber);
 
 }

@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.h2.tools.Console;
+import org.springframework.context.annotation.Bean;
+
 import java.sql.SQLException;
 
 
@@ -14,12 +16,12 @@ public class ScheduleApplication {
 
         ConfigurableApplicationContext context = SpringApplication.run(ScheduleApplication.class, args);
 
-        try {
-            //Консоль для визуализации бд в браузере
-            Console.main(args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //Консоль для визуализации бд в браузере
+//            Console.main(args);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

@@ -33,10 +33,10 @@ public class Schedule{
     @Column(name = "day_week")
     private String dayWeek;
 
-    @Column(name = "time_Start")
+    @Column(name = "time_start")
     private String timeStart;
 
-    @Column(name = "time_End")
+    @Column(name = "time_end")
     private String timeEnd;
 
     @Column(name = "classroom")
