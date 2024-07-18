@@ -10,20 +10,32 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Реализация интерфейса {@link SubgroupService}.
+ *
+ * @version 1.0
+ * @autor Егор Гришанов
+ */
 @Service
 @RequiredArgsConstructor
 public class SubgroupServiceImpl implements SubgroupService {
 
     private final SubgroupRepository subgroupRepository;
-
     private final GroupRepository groupRepository;
 
+    /**
+     * Вставляет новую подгруппу.
+     *
+     * @param id идентификатор подгруппы
+     * @param number номер подгруппы
+     * @param group_number номер группы
+     * @return сохраненная подгруппа
+     */
     @Override
     public Subgroup insert(int id, String number, String group_number) {
-
         Group groupId = groupRepository.findByNumber(group_number);
 
-        if (groupId == null){
+        if (groupId == null) {
             return null; //TODO: throw exception
         }
 
@@ -35,6 +47,14 @@ public class SubgroupServiceImpl implements SubgroupService {
         return subgroupRepository.saveAndFlush(subgroup);
     }
 
+    /**
+     * Обновляет подгруппу.
+     *
+     * @param id идентификатор подгруппы
+     * @param number номер подгруппы
+     * @param group_number номер группы
+     * @return обновленная подгруппа
+     */
     @Override
     public Subgroup update(int id, String number, String group_number) {
         Group groupId = groupRepository.findByNumber(group_number);
@@ -48,32 +68,64 @@ public class SubgroupServiceImpl implements SubgroupService {
         );
     }
 
-
+    /**
+     * Получает подгруппу по номеру.
+     *
+     * @param number номер подгруппы
+     * @return подгруппа
+     */
     @Override
     public Subgroup getByNumber(String number) {
         return subgroupRepository.findByNumber(number);
     }
 
+    /**
+     * Получает подгруппы по идентификатору группы.
+     *
+     * @param group_id идентификатор группы
+     * @return список подгрупп
+     */
     @Override
     public List<Subgroup> getByGroupId(int group_id) {
         return subgroupRepository.findByGroupId(group_id);
     }
 
+    /**
+     * Удаляет подгруппу по идентификатору.
+     *
+     * @param id идентификатор подгруппы
+     */
     @Override
     public void deleteById(int id) {
         subgroupRepository.deleteById(id);
     }
 
+    /**
+     * Удаляет подгруппы по идентификатору группы.
+     *
+     * @param group_id идентификатор группы
+     */
     @Override
     public void deleteByGroupId(int group_id) {
         subgroupRepository.deleteByGroupId(group_id);
     }
 
+    /**
+     * Получает все подгруппы.
+     *
+     * @return список всех подгрупп
+     */
     @Override
     public List<Subgroup> getAll() {
         return subgroupRepository.findAll();
     }
 
+    /**
+     * Получает подгруппы по номеру группы.
+     *
+     * @param groupNumber номер группы
+     * @return список подгрупп
+     */
     @Override
     public List<Subgroup> getByGroupNumber(String groupNumber) {
         return subgroupRepository.findByGroupNumber(groupNumber);

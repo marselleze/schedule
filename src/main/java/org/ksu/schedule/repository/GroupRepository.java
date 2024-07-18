@@ -1,38 +1,53 @@
 package org.ksu.schedule.repository;
 
 import org.ksu.schedule.domain.Group;
-import org.ksu.schedule.rest.dto.SubgroupDto;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-
+/**
+ * Репозиторий для работы с сущностями {@link Group}.
+ *
+ * @version 1.0
+ * @author Егор Гришанов
+ */
 public interface GroupRepository extends JpaRepository<Group, Integer> {
-    // Метод кастомных запросов
-    //@Query("select d from Group d where d.direction = :direction")
-    //Group findByDirection(@Param("direction") String direction);
-
-
-    //@Query("select p from Group p where p.profile = :profile")
-    //Group findByProfile(@Param("profile") String profile);
-
-
-    // Более современный метод создания собственных методов
+    /**
+     * Находит группы по направлению.
+     *
+     * @param direction направление группы
+     * @return список групп, соответствующих направлению
+     */
     List<Group> findByDirection(String direction);
+
+    /**
+     * Находит группы по профилю.
+     *
+     * @param profile профиль группы
+     * @return список групп, соответствующих профилю
+     */
     List<Group> findByProfile(String profile);
 
+    /**
+     * Находит идентификатор группы по номеру.
+     *
+     * @param number номер группы
+     * @return идентификатор группы
+     */
     Integer findGroupIdByNumber(String number);
 
+    /**
+     * Находит группу по номеру.
+     *
+     * @param number номер группы
+     * @return группа, соответствующая номеру
+     */
     Group findByNumber(String number);
 
-    //@Query("select d from Subgroup d where d.id = :subgroups")
-    //Group findBySubgroupId(@Param("subgroups") int subgroups);;
-
+    /**
+     * Удаляет группу по номеру.
+     *
+     * @param number номер группы
+     */
     void deleteByNumber(String number);
-
-
-
-
 }

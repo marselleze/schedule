@@ -24,6 +24,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
             max-width: 90%;
             width: 300px; /* Ширина формы на десктопах */
+            display: none; /* Скрываем форму по умолчанию */
         }
 
         h2 {
@@ -51,29 +52,172 @@
         button:hover {
             background-color: #1e90ff; /* Более темный синий цвет при наведении */
         }
+
+        /* Модальное окно для авторизации */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+<!-- Модальное окно авторизации -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Авторизация</h2>
+        <form id="loginForm">
+            <label for="email">Имя пользователя:</label><br>
+            <input type="text" id="email" name="email" required><br><br>
+            <label for="password">Пароль:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+</div>
+
 <div id="uploadForm">
     <h2>Отправить Excel файл</h2>
-    <form action="/import/import-excel" method="post" enctype="multipart/form-data" onsubmit="return submitForm()">
+    <form id="fileUploadForm" enctype="multipart/form-data">
         <input type="file" name="files" id="files" accept=".xls,.xlsx" multiple>
-        <button type="submit" name="submit">Отправить</button>
+        <button type="submit">Отправить</button>
     </form>
 </div>
 
-
 <script>
-    function submitForm() {
-        var files = document.getElementById("files").files;
-        if (files.length === 0) {
-            alert("Пожалуйста, выберите файл для загрузки.");
-            return false;
-        }
-        alert("Файл(ы) успешно отправлен(ы)!");
-        window.location.href = "/";
-        return true;
+    // Открывает модальное окно авторизации
+    function openModal() {
+        document.getElementById('loginModal').style.display = 'block';
     }
+
+    // Закрывает модальное окно авторизации
+    function closeModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
+
+    // Функция для авторизации через REST API
+    async function login(event) {
+        event.preventDefault(); // Отменяем стандартное действие формы (отправку)
+
+        let email = document.getElementById('email').value;
+        let password = document.getElementById('password').value;
+
+        try {
+            let response = await fetch('/api/v1/auth/authenticate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка авторизации');
+            }
+
+            let data = await response.json();
+            // При успешной авторизации сохраняем токен в localStorage
+            localStorage.setItem("token", data.token);
+
+
+            // Закрываем модальное окно авторизации и показываем форму загрузки файла
+            closeModal();
+            document.getElementById('uploadForm').style.display = 'block';
+
+        } catch (error) {
+            alert('Ошибка авторизации: ' + error.message);
+        }
+    }
+
+    // Проверяем, авторизован ли пользователь при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        let accessToken = localStorage.getItem('token');
+        if (accessToken) {
+            // Если токен есть в localStorage, показываем форму загрузки файла
+            document.getElementById('uploadForm').style.display = 'block';
+        } else {
+            // Если токена нет, открываем модальное окно для авторизации
+            openModal();
+        }
+    });
+
+    // Обработка отправки формы авторизации
+    document.getElementById('loginForm').addEventListener('submit', login);
+
+    // Обработка отправки формы загрузки файла
+    document.getElementById('fileUploadForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        let files = document.getElementById('files').files;
+        if (files.length === 0) {
+            alert('Пожалуйста, выберите файл для загрузки.');
+            return;
+        }
+
+        let accessToken = localStorage.getItem('token');
+
+        if (!accessToken) {
+            alert('Необходимо авторизоваться для загрузки файла.');
+            return;
+        }
+
+        let formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        try {
+            let response = await fetch('/api/v1/import/import-excel', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки файла');
+            }
+
+            alert('Файл(ы) успешно отправлен(ы)!');
+            window.location.href = '/';
+
+        } catch (error) {
+            alert('Ошибка загрузки файла: ' + error.message);
+        }
+    });
 </script>
 </body>
 </html>

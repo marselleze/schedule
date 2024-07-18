@@ -11,8 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * Контроллер для импорта данных из Excel файлов.
+ *
+ * @version 1.0
+ * @autor Егор Гришанов
+ */
 @RestController
-@RequestMapping(path = "/import")
+@RequestMapping(path = "/api/v1/import")
 public class ExcelImportController {
 
     @Autowired
@@ -21,6 +27,11 @@ public class ExcelImportController {
     @Autowired
     private ScheduleImportService scheduleImportService;
 
+    /**
+     * Обработчик POST-запроса для импорта данных расписания из Excel файлов.
+     *
+     * @param files список файлов Excel для импорта
+     */
     @PostMapping(path = "/import-excel")
     public void importScheduleData(
             @RequestPart(required = true) List<MultipartFile> files) {
@@ -28,11 +39,4 @@ public class ExcelImportController {
         excelImportService.importExcel(files);
         scheduleImportService.importExcel(files);
     }
-
-    @PostMapping(path = "/import-schedule")
-    public void buildSchedule(
-            @RequestPart(required = true) List<MultipartFile> files ){
-        scheduleImportService.importExcel(files);
-    }
-
 }

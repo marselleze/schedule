@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ksu.schedule.domain.Group;
-import org.ksu.schedule.domain.Subgroup;
 
-import java.util.List;
-import java.util.Objects;
-
+/**
+ * DTO класс для представления группы.
+ *
+ * @version 1.0
+ * @autor Егор Гришанов
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,24 +19,31 @@ import java.util.Objects;
 public class GroupDto {
 
     private int id;
-
     private String number;
-
     private String direction;
-
     private String profile;
 
-    
+    /**
+     * Преобразует сущность {@link Group} в DTO {@link GroupDto}.
+     *
+     * @param group объект группы
+     * @return DTO объект группы
+     */
     public static GroupDto toDto(Group group) {
         return new GroupDto(
                 group.getId(),
                 group.getNumber(),
                 group.getDirection(),
                 group.getProfile()
-
         );
     }
 
+    /**
+     * Преобразует DTO {@link GroupDto} в сущность {@link Group}.
+     *
+     * @param groupDto DTO объект группы
+     * @return сущность группы
+     */
     public static Group toDomain(GroupDto groupDto) {
         return new Group(
                 groupDto.getId(),

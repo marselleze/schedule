@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-07-01--0007-photo" author="PinkyZeus">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions>
+            <not>
+                <tableExists tableName="photo"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="photo">
+            <column name="id"
+                    type="INTEGER"
+                    autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             unique="true"
+                />
+
+            </column>
+
+            <column name="url"
+                    type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id"
+                    type="INTEGER">
+                <constraints nullable="false"
+                unique="true"/>
+            </column>
+
+
+
+        </createTable>
+        <addForeignKeyConstraint baseTableName="photo" baseColumnNames="user_id" constraintName="fk_photo_user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+    </changeSet>
+
+
+</databaseChangeLog>
