@@ -5,8 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="2024-04-05--0001-batch" author="PinkyZeus">
-        <validCheckSum>9:a82e5083285d69956c240e80a5aaff73</validCheckSum>
+    <changeSet id="2024-07-22--0008-batch" author="PinkyZeus">
+        <validCheckSum>ANY</validCheckSum>
 
         <preConditions>
             <not>

@@ -47,9 +47,10 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
             List<Teacher> teacherTransactions = new ArrayList<>();
             List<Subject> subjectTransactions = new ArrayList<>();
             List<Schedule> scheduleTransactions = new ArrayList<>();
-            List<Long> subgrIds = new ArrayList<>();
+
             files.forEach(multipartfile -> {
                 try {
+
                     XSSFWorkbook workbook = new XSSFWorkbook(multipartfile.getInputStream());
 
                     /////// Блок переменных для БД //////
@@ -69,32 +70,51 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                     String weekView = "";
                     String numAuditorium = "";
 
-                    // Счётчик листов
+                    //Счётчик листов
                     for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
+                        //Выводим номер листа для тестов программы
                         System.out.println(numSheet + 1);
+                        // Описываем лист по индексу
                         XSSFSheet sheet = workbook.getSheetAt(numSheet);
+                        //вывод кол-во подгрупп
+                        //System.out.println(countSubGroups(sheet));
+                        ////// Чтение используя for //////
 
+                        // Создаём переменную хронящую номер последний строки(кол-во строк)
                         int rows = skipLowRows(sheet);
+                        // Cоздаём переменную хронящую кол-во ячеек в заданной строке - кол-во столбцов
                         int cols = numCols(sheet);
-                        int controlWeekView = skipTopRows(sheet) + 2;
+                        //Переменная для контроля при делении пар на числитель и знаменатель
+                        int controlWeekView = skipTopRows(sheet) + 1;
+                        //Создаём переменную, которая будет хранить индекс первой ячейки с аудиториией
+                        //int indexFirstAuditCell = 0;
+                        //Создаём переменную, номера подгруппы, для проходки по столбцам
                         int numSubGroup = 1;
+                        //Разбиваем направление
                         int indexProf = 0;
-
+                        //Разбиваем строку на список
                         List<String> fullName = new ArrayList<>(List.of(sheet.getRow(skipTopRows(sheet)).getCell(2).getStringCellValue().split(" ")));
-                        fullName.removeIf(String::isEmpty);
+                        //Удаляем лишние пробелы
+                        fullName.remove("");
+                        //Удаляем лишние переносы строк
                         for (int i = 0; i < fullName.size(); i++) {
                             fullName.set(i, fullName.get(i).trim());
                         }
 
+                        //i - индекс подстроки в списке
                         for (int i = 0; i < fullName.size(); i++) {
+                            //Запоминаем индекс вида пары и должности препода
                             if (fullName.get(i).contains("(")) {
                                 indexProf = i - 1;
                                 break;
                             }
                         }
 
+                        //Создаём 2 списка куда будем помещать направление и профиль
                         List<String> direction = new ArrayList<>();
                         List<String> profile = new ArrayList<>();
+
+                        //Заполняем списки нужными данными
                         for (int listElms = 0; listElms < indexProf; listElms++) {
                             direction.add(fullName.get(listElms));
                         }
@@ -102,92 +122,118 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                             profile.add(fullName.get(listElms));
                         }
 
+                        //Создаём переменные для удобства переноса данных в БД
+
+                        //Вывод направления
                         nameDirection = String.join(" ", direction);
+                        //Вывод профиля
                         nameProfile = String.join(" ", profile);
+                        //Направление
                         System.out.println(nameDirection);
+                        //Профиль
                         System.out.println(nameProfile);
 
+                        /////Получаем номер группы////
                         for (int c = 2; c < cols - 1; c += 2) {
-                            if (!fullCell(sheet.getRow(skipTopRows(sheet) + 1).getCell(c))) {
-                                continue;
-                            }
 
-                            String[] fullGroup = sheet.getRow(skipTopRows(sheet) + 1).getCell(c).getStringCellValue().split(" ");
+                            if (!fullCell(sheet.getRow(skipTopRows(sheet) + 2).getCell(c))) continue;
+
+                            String[] fullGroup = sheet.getRow(skipTopRows(sheet) + 2).getCell(c).getStringCellValue().split(" ");
                             String groupAndSub = fullGroup[1];
                             fullGroup = groupAndSub.split("\\.");
-                            if (!numGroup.equals(fullGroup[0])) {
+                            if (!(numGroup.equals(fullGroup[0]))) {
                                 numGroup = fullGroup[0];
+                                //Номер группы
+                                System.out.println(numGroup);
                             }
                         }
 
-                        for (int r = skipTopRows(sheet) + 1; r < rows + 1; r++) {
-                            if (r == controlWeekView + 2) {
-                                controlWeekView = r;
-                            }
 
-                            if (numSubGroup > countSubGroups(sheet)) {
-                                break;
-                            }
+                        //r-строки, с-столбцы
+                        for (int r = skipTopRows(sheet) + 2; r < rows + 1; r++) {
+                            //Вывод разделения по виду недели
+                            if (r == controlWeekView + 2) controlWeekView = r;
 
+                            //выходим из цикла если прошлись по всем подгруппам
+                            if (numSubGroup > countSubGroups(sheet)) break;
+                            //Если прошлись по всем строкам возвращаемся в первую строку и меняем номер подгруппы
                             if (r == rows) {
-                                r = skipTopRows(sheet) + 1;
+                                r = skipTopRows(sheet) + 2;
                                 controlWeekView = skipTopRows(sheet) + 2;
                                 numSubGroup++;
                             }
 
+                            //Создаём флаг, который помогает запомнить индекс ячейки для определения аудитории
                             boolean flag = false;
+                            //Создаём флаг, для проверки пары на общую
                             boolean genPara = false;
+                            //Получаем строку номера r
                             XSSFRow row = sheet.getRow(r);
-                            if (row == null) {
-                                continue;
-                            }
-
+                            //Если строка пустая, пропускаем
+                            if (row == null) continue;
+                            //Пропускаяем пустые строки, выводим только день недели и время
                             if (skipExtraRow(row, cols)) {
                                 if (fullCell(row.getCell(0))) {
+                                    //Переменная хранящая день недели
                                     day = String.valueOf(row.getCell(0));
                                 }
                                 if (fullCell(row.getCell(1))) {
+
                                     switch (row.getCell(1).getStringCellValue()) {
-                                        case "8.00 - 9.30":
+                                        case "08.00 - 09.30":
                                             time = "08:00 09:30";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
-                                        case "9.40 - 11.10":
+                                        case "09.40 - 11.10":
                                             time = "09:40 11:10";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "11.20 - 12.50":
                                             time = "11:20 12:50";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "13.10 - 14.40":
                                             time = "13:10 14:40";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "14.50 - 16.20":
                                             time = "14:50 16:20";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "16.30 – 18.00":
                                             time = "16:30 18:00";
-                                            fullTime = time.split(" ");
+                                            fullTime = time.split("");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "18.10 – 19.40":
                                             time = "18:10 19:40";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                     }
@@ -196,102 +242,119 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                             }
 
                             for (int c = 0; c < cols; c++) {
-                                if (c == 2 && c != numSubGroup * 2) {
-                                    c = numSubGroup * 2;
-                                }
+                                //Меняем номер ячейки в зависимости от номера подгруппы
+                                if (c == 2 && c != numSubGroup * 2) c = numSubGroup * 2;
+                                //Если вышли за пределы подгруппы, выходим из цикла
+                                if (c > numSubGroup * 2) break;
 
-                                if (c > numSubGroup * 2) {
-                                    break;
-                                }
-
+                                //Получаем ячейку номера c
                                 XSSFCell cell = row.getCell(c);
 
-                                if (!fullCell(row.getCell(3)) && !fullCell(row.getCell(4))) {
-                                    genPara = true;
-                                }
+                                //Проверяем есть ли что-то в ячейке с аудиторией для первой подгруппы, чтобы определить общая пара или нет
+                                if (!fullCell(row.getCell(3)) && !fullCell(row.getCell(4))) genPara = true;
 
-                                if (genPara && c == numSubGroup * 2) {
-                                    cell = row.getCell(2);
-                                }
+                                //Меняем значение ячеек с дисциплиной и аудиторией если пара общая
+                                if (genPara && c == numSubGroup * 2) cell = row.getCell(2);
 
-                                if (!fullCell(cell)) {
-                                    continue;
-                                }
+                                //Пропускаем если ячейка пустая или внутри неё пробел
+                                if (!fullCell(cell)) continue;
 
-                                if (r == skipTopRows(sheet) + 1 && cell.getStringCellValue().contains("А")) {
+                                //Не выводим "Ауд."
+                                if (r == skipTopRows(sheet) + 2 && cell.getStringCellValue().contains("А")) {
                                     if (!flag) {
+                                        //indexFirstAuditCell = c;
                                         flag = true;
                                     }
                                     continue;
                                 }
 
+                                //Разбиваем время
                                 if (c == 1) {
                                     switch (cell.getStringCellValue()) {
-                                        case "8.00 - 9.30":
+                                        case "08.00 - 09.30":
                                             time = "08:00 09:30";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
-                                        case "9.40 - 11.10":
+                                        case "09.40 - 11.10":
                                             time = "09:40 11:10";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "11.20 - 12.50":
                                             time = "11:20 12:50";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "13.10 - 14.40":
                                             time = "13:10 14:40";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "14.50 - 16.20":
                                             time = "14:50 16:20";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "16.30 – 18.00":
                                             time = "16:30 18:00";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                         case "18.10 – 19.40":
                                             time = "18:10 19:40";
                                             fullTime = time.split(" ");
+                                            //Время начала
                                             startTime = fullTime[0];
+                                            //Время конца
                                             endTime = fullTime[1];
                                             break;
                                     }
                                     continue;
                                 }
 
-                                if (r == skipTopRows(sheet) + 1) {
+                                //Разбиваем группы, получаем номер группы и подгрупп
+                                if (r == skipTopRows(sheet) + 2) {
+                                    //Создаём массив из слов
                                     String[] fullNumGroup = cell.getStringCellValue().split(" ");
+                                    //Получем номер подгруппы
                                     subGroup = fullNumGroup[1];
-
-                                    System.out.println(subGroup);
                                     continue;
                                 }
 
-                                if (r > skipTopRows(sheet) + 1 && (c > 1 && c % 2 == 0 && c != cols - 1) && cell.getCellType() == CellType.STRING) {
+                                //Разбиваем дисциплину
+                                if (r > skipTopRows(sheet) + 2 && (c > 1 && c % 2 == 0 && c != cols - 1) && cell.getCellType() == CellType.STRING) {
                                     int indexView = 0;
                                     int indexPost = 0;
-
+                                    //Разбиваем строку на список
                                     List<String> fullNameDiscip = new ArrayList<>(List.of(cell.getStringCellValue().split(" ")));
-                                    fullNameDiscip.removeIf(String::isEmpty);
+                                    //Удаляем лишние пробелы
+                                    fullNameDiscip.remove("");
+                                    //Удаляем лишние переносы строк
                                     for (int i = 0; i < fullNameDiscip.size(); i++) {
                                         fullNameDiscip.set(i, fullNameDiscip.get(i).trim());
                                     }
-
+                                    //i - индекс подстроки в списке
                                     for (int i = 0; i < fullNameDiscip.size(); i++) {
+                                        //Запоминаем индекс вида пары и должности препода
                                         if (fullNameDiscip.get(i).contains("(")) {
                                             indexView = i;
                                             indexPost = i + 1;
@@ -307,8 +370,11 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                         fullNameDiscip.add(indexPost + 1, fam);
                                     }
 
+
+                                    //Создаём 2 списка куда будем помещать название и ФИО
                                     List<String> discipline = new ArrayList<>();
                                     List<String> FCs = new ArrayList<>();
+                                    //Заполняем списки нужными данными
                                     for (int discElms = 0; discElms < indexView; discElms++) {
                                         discipline.add(fullNameDiscip.get(discElms));
                                     }
@@ -316,40 +382,65 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                         FCs.add(fullNameDiscip.get(FCsElms));
                                     }
 
+                                    //Создаём переменные для удобства переноса данных в БД
+
+                                    //Вывод дисциплины
                                     nameDiscipline = String.join(" ", discipline);
+                                    //Вывод вида пары
                                     disciplineView = fullNameDiscip.get(indexView);
+                                    //Вывод ФИО преподователя
                                     teacherFCs = String.join(" ", FCs);
+                                    //Вывод должности преподователя
                                     teacherPost = fullNameDiscip.get(indexPost);
+                                    //Вывод разделения по виду недели
                                     if (numDenOrCom(sheet, controlWeekView)) {
                                         if (r == controlWeekView) {
                                             weekView = "ЧИСЛИТЕЛЬ";
+                                            //Следующую строку меняешь на добавление в БД
+                                            //System.out.println(weekView);
                                         } else if (r == controlWeekView + 1) {
                                             weekView = "ЗНАМЕНАТЕЛЬ";
+                                            //Следующую строку меняешь на добавление в БД
+                                            //System.out.println(weekView);
                                         }
                                     } else {
                                         weekView = "ВСЕГДА";
+                                        //Следующую строку меняешь на добавление в БД
+                                        //System.out.println(weekView);
                                     }
                                 }
-
+                                //Вывод дня недели
                                 if (c == 0) {
                                     day = String.valueOf(cell);
+                                    //Следующую строку меняешь на добавление в БД
+                                    //System.out.println(day);
                                     continue;
                                 }
-
+                                //Вывод аудитории
                                 if (genPara) {
                                     numAuditorium = String.valueOf(getValue(row.getCell(numCols(sheet) - 1)));
-                                } else {
-                                    numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
-                                }
+                                } else numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
 
+
+                                //Следующую строку меняешь на добавление в БД
+                                System.out.println(subGroup);
+                                //Дисциплина
                                 System.out.println(nameDiscipline);
+                                //Вид пары
                                 System.out.println(disciplineView);
+                                //ФИО препода
                                 System.out.println(teacherFCs);
+                                //Должность
                                 System.out.println(teacherPost);
+                                //Вид недели
                                 System.out.println(weekView);
+                                //День недели
                                 System.out.println(day);
+                                //Время начала
                                 System.out.println(startTime);
+                                //Время конца
                                 System.out.println(endTime);
+                                //Аудитория
                                 System.out.println(numAuditorium);
 
                                 if (subjectRepository.findByNameAndType(nameDiscipline, disciplineView) != null
@@ -370,20 +461,148 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                     scheduleTransactions.add(scheduleTransaction);
                                 }
                             }
+                            //Пропуск строки для удобства чтения
                             System.out.println();
+
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             });
-
             if (!scheduleTransactions.isEmpty()) {
                 scheduleRepository.saveAll(scheduleTransactions);
             }
         }
     }
 
+    //Метод проверяющий пустая ячейка или нет
+    //true - не пустая
+    //false - пустая
+    public static boolean fullCell(XSSFCell cell) {
+        if (cell != null && cell.getCellType() != CellType.BLANK)
+            return true;
+        else if (cell == null || cell.getCellType() == CellType.BLANK)
+            return false;
+        return false;
+    }
+
+    //Метод, возвращающий номер строки, с которой начинается таблица
+    public static int skipTopRows(XSSFSheet sheet) {
+        // Создаём переменную хронящую номер последний строки(кол-во строк)
+        int rows = sheet.getLastRowNum();
+
+        //r-строки, с-столбцы
+        for (int r = 0; r < rows; r++) {
+            //Получаем строку номера r
+            XSSFRow row = sheet.getRow(r);
+            //Если строка пустая, пропускаем
+            if (row == null)
+                continue;
+            //Получаем ячейку номера c
+            XSSFCell cell = row.getCell(0);
+            //Пропускаем если ячейка пустая или внутри неё пробел
+            if (!fullCell(cell))
+                continue;
+            //С помощью флага пропускаем все строки до строки с "День недели"
+            if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains("Д")) {
+                return r;
+            }
+        }
+        return 0;
+    }
+
+    //Метод возвращающий номер последней строки в расписании
+    public static int skipLowRows(XSSFSheet sheet) {
+        // Создаём переменную хронящую номер последний строки(кол-во строк)
+        int rows = sheet.getLastRowNum();
+
+        //r-строки
+        for (int r = rows; r >= 0; r--) {
+            //Получаем строку номера r
+            XSSFRow row = sheet.getRow(r);
+            //Если строка пустая, пропускаем
+            if (row == null)
+                continue;
+            //Получаем ячейку номера 1
+            XSSFCell cell = row.getCell(0);
+            //Пропускаем если ячейка пустая или внутри неё пробел
+            if (!fullCell(cell))
+                continue;
+            //Если доходим до строки с "СОГЛАСОВАНО" возвращаем номер этой строки
+            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("Согл"))) {
+                return r;
+            }
+        }
+        return 0;
+    }
+
+    //Метод возвращающий количество столбцов
+    public static int numCols(XSSFSheet sheet) {
+        // Cоздаём переменную хронящую кол-во ячеек в заданной строке - кол-во столбцов
+        int cols = sheet.getRow(skipTopRows(sheet) + 2).getLastCellNum();
+        //Получаем строку
+        XSSFRow row = sheet.getRow(skipTopRows(sheet) + 2);
+
+        while (true) {
+            //Получаем ячейку номера cols
+            XSSFCell cell = row.getCell(cols);
+            //Пропускаем если ячейка пустая или внутри неё пробел
+            if (!fullCell(cell))
+                cols -= 1;
+            else if (cell.getStringCellValue().contains("А")) {
+                return cols + 1;
+            }
+        }
+    }
+
+    //Метод считающий кол-во подгрупп
+    public static int countSubGroups(XSSFSheet sheet){
+        int countSubGroups = 0;
+        XSSFRow row = sheet.getRow(skipTopRows(sheet) + 2);
+        for (int c = 2; c < numCols(sheet); c += 2){
+            //Получаем ячейку номера c
+            XSSFCell cell = row.getCell(c);
+            if (cell.getStringCellValue().contains("руп"))
+                countSubGroups++;
+        }
+        return countSubGroups;
+    }
+
+    //Метод, который проверяет нужно ли выводить строку, проверя ячейки с дисциплинами на пустоту
+    public static boolean skipExtraRow(XSSFRow row, int cols) {
+        //Счётчик не пустых ячеек
+        int countNONEmpty = 0;
+
+        //c - индекс ячейки
+        for (int c = 2; c < cols - 1; c++) {
+            //Получаем ячейку индекса с
+            XSSFCell cell = row.getCell(c);
+            //Пропускаем если ячейка пустая или внутри неё пробел
+            if (fullCell(cell))
+                countNONEmpty += 1;
+        }
+
+        //Если все ячейки пустые пропускаем, иначе - нет
+        if (countNONEmpty == 0)
+            return true;
+        else
+            return false;
+    }
+
+    //Метод проверяющий пара делится на ЧИСЛИТЕЛЬ и ЗНАМЕНАТЕЛЬ или она ВСЕГДА
+    //true - ЧИСЛИТЕЛЬ и ЗНАМЕНАТЕЛЬ
+    //false - ВСЕГДА
+    public static boolean numDenOrCom(XSSFSheet sheet, int r) {
+        XSSFRow row2 = sheet.getRow(r + 1);
+        XSSFCell cell = row2.getCell(2);
+        if (fullCell(cell))
+            return true;
+        else
+            return false;
+    }
+
+    //Метод из готового парсера, возвращаящий значение взависимости от полученного типа данных
     private static Object getValue(XSSFCell cell) {
         switch (cell.getCellType()) {
             case STRING:
@@ -402,76 +621,5 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                 break;
         }
         return null;
-    }
-
-    public static boolean fullCell(XSSFCell cell) {
-        return cell != null && cell.getCellType() != CellType.BLANK;
-    }
-
-    public static int skipTopRows(XSSFSheet sheet) {
-        int rows = sheet.getLastRowNum();
-
-        for (int r = 0; r < rows; r++) {
-            XSSFRow row = sheet.getRow(r);
-            if (row == null) continue;
-
-            XSSFCell cell = row.getCell(0);
-            if (!fullCell(cell)) continue;
-
-            if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains("Д")) {
-                return r;
-            }
-        }
-        return 0;
-    }
-
-    public static int skipLowRows(XSSFSheet sheet) {
-        int rows = sheet.getLastRowNum();
-
-        for (int r = rows; r >= 0; r--) {
-            XSSFRow row = sheet.getRow(r);
-            if (row == null) continue;
-
-            XSSFCell cell = row.getCell(0);
-            if (!fullCell(cell)) continue;
-
-            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("СОГЛ") || cell.getStringCellValue().contains("Согл"))) {
-                return r;
-            }
-        }
-        return 0;
-    }
-
-    public static int numCols(XSSFSheet sheet) {
-        int cols = sheet.getRow(skipTopRows(sheet) + 1).getLastCellNum();
-        XSSFRow row = sheet.getRow(skipTopRows(sheet) + 1);
-
-        while (true) {
-            XSSFCell cell = row.getCell(cols);
-            if (!fullCell(cell)) {
-                cols -= 1;
-            } else if (cell.getStringCellValue().contains("А")) {
-                return cols + 1;
-            }
-        }
-    }
-
-    public static boolean skipExtraRow(XSSFRow row, int cols) {
-        int countNONEmpty = 0;
-
-        for (int c = 2; c < cols - 1; c++) {
-            XSSFCell cell = row.getCell(c);
-            if (fullCell(cell)) {
-                countNONEmpty += 1;
-            }
-        }
-
-        return countNONEmpty == 0;
-    }
-
-    public static boolean numDenOrCom(XSSFSheet sheet, int r) {
-        XSSFRow row2 = sheet.getRow(r + 1);
-        XSSFCell cell = row2.getCell(2);
-        return fullCell(cell);
     }
 }
