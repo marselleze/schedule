@@ -67,15 +67,5 @@ public class UserController {
                                                         @RequestParam String info) {
         return ResponseEntity.ok().body(userService.updateTeacher(email, lastName, firstName, middleName, info));
     }
-
-    /**
-     * Получить преподавателя по ID.
-     *
-     * @param id Идентификатор преподавателя.
-     * @return Ответ с преподавателем.
-     */
-    @GetMapping("/user/teacher/{id}")
-    public ResponseEntity<Optional<User>> getTeacher(@PathVariable int id) {
-        return ResponseEntity.ok().body(userService.getByTeacherId(id));
-    }
+    
 }

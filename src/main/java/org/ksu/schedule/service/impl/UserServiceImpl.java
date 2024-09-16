@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.User;
 import org.ksu.schedule.repository.UserRepository;
 import org.ksu.schedule.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * Реализация интерфейса {@link UserService}.
@@ -19,6 +22,11 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
 
     /**
      * Получает пользователя по email.
@@ -75,14 +83,13 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    /**
-     * Получает пользователя по идентификатору преподавателя.
-     *
-     * @param teacherId идентификатор преподавателя
-     * @return найденный пользователь
-     */
+
     @Override
-    public Optional<User> getByTeacherId(int teacherId) {
-        return userRepository.findByTeacherId(teacherId);
+    public void updatePassword(User user, String newPassword) {
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+        logger.info("Password for user {} was updated. Encoded password: {}" + user.getEmail() + encodedPassword);
     }
+
 }

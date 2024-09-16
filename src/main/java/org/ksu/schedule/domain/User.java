@@ -83,14 +83,10 @@ public class User implements UserDetails {
     /**
      * Фото пользователя.
      */
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "photo_id")
     @JsonManagedReference
     private Photo photo;
-
-    /**
-     * Идентификатор преподавателя, если пользователь является преподавателем.
-     */
-    private int teacherId;
 
     /**
      * Возвращает список прав, предоставленных пользователю.
@@ -160,5 +156,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

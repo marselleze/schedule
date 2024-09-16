@@ -24,13 +24,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional с пользователем
      */
     Optional<User> findByEmail(String email);
-
-    /**
-     * Находит пользователя по идентификатору преподавателя.
-     *
-     * @param teacherId идентификатор преподавателя
-     * @return Optional с пользователем
-     */
-    @Query("select u from User u where u.teacherId = :teacherId")
-    Optional<User> findByTeacherId(@Param("teacherId") int teacherId);
 }

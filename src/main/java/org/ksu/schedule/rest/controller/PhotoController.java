@@ -64,7 +64,7 @@ public class PhotoController {
      * @return ResponseEntity с ресурсом фотографии
      */
     @GetMapping("/download/id")
-    public ResponseEntity<Resource> getPhotoById(@RequestParam int id) {
+    public ResponseEntity<Resource> getPhotoById(@RequestParam Long id) {
         Photo photo = photoService.getById(id);
         if (photo != null) {
             try {
@@ -119,26 +119,4 @@ public class PhotoController {
         }
     }
 
-    /**
-     * Скачивание фотографии по идентификатору преподавателя.
-     *
-     * @param id идентификатор преподавателя
-     * @return ResponseEntity с фотографией преподавателя
-     */
-    @GetMapping("/download/teacher/{id}")
-    public ResponseEntity<Photo> getPhotoByTeacherId(@PathVariable int id) {
-        List<Teacher> teachers = teacherRepository.findByTeacherId(id);
-        if (teachers.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Teacher not found");
-        } else if (teachers.size() > 1) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Multiple teachers found with the same ID");
-        } else {
-            Teacher teacher = teachers.get(0);
-            Photo photo = teacher.getPhoto();
-            if (photo == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Photo not found");
-            }
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(photo);
-        }
-    }
 }

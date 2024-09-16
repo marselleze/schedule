@@ -24,10 +24,6 @@ public class TeacherDto {
     private String name;
     private String post;
 
-    @JsonIgnore
-    private Photo photo;
-
-    private Long userId;
 
     /**
      * Преобразует сущность {@link Teacher} в DTO {@link TeacherDto}.
@@ -39,9 +35,7 @@ public class TeacherDto {
         return new TeacherDto(
                 teacher.getId(),
                 teacher.getName(),
-                teacher.getPost(),
-                teacher.getPhoto(),
-                teacher.getUserId());
+                teacher.getPost());
     }
 
     /**
@@ -54,9 +48,7 @@ public class TeacherDto {
         return new Teacher(
                 teacherDto.getId(),
                 teacherDto.getName(),
-                teacherDto.getPost(),
-                teacherDto.getUserId(),
-                teacherDto.getPhoto()
+                teacherDto.getPost()
         );
     }
 }

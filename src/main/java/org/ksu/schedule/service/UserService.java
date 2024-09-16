@@ -43,11 +43,6 @@ public interface UserService {
      */
     Optional<User> updateTeacher(String email, String lastName, String firstName, String middleName, String info);
 
-    /**
-     * Получить пользователя по идентификатору преподавателя.
-     *
-     * @param teacherId идентификатор преподавателя
-     * @return объект Optional, содержащий пользователя
-     */
-    Optional<User> getByTeacherId(int teacherId);
+
+    void updatePassword(User user, String newPassword);
 }

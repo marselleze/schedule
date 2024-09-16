@@ -70,25 +70,6 @@ public class AuthenticationService {
         // Сохраняем пользователя в базу данных и получаем сохраненного пользователя с ID
         User savedUser = userRepository.save(user);
 
-        // Переменная для хранения идентификатора преподавателя
-        Integer teacher_Id = -1;
-
-        if ("TEACHER".equals(request.getRole().name())) {
-            // Поиск преподавателя по фамилии и инициалам
-            Optional<Teacher> teacherOpt = Optional.ofNullable(teacherRepository.findByName(lastName + " " + firstNameInitial + middleNameInitial));
-
-            if (teacherOpt.isPresent()) {
-                Teacher teacher = teacherOpt.get();
-                teacher.setUserId(savedUser.getId()); // Устанавливаем ID пользователя в сущности Teacher
-                teacherRepository.save(teacher); // Сохраняем изменения в базе данных
-                teacher_Id = teacher.getId();
-            } else {
-                throw new RuntimeException("Преподаватель с указанными фамилией и инициалами не найден.");
-            }
-        }
-
-        // Обновляем пользователя с идентификатором преподавателя, если он найден
-        savedUser.setTeacherId(teacher_Id);
         userRepository.save(savedUser);
 
         // Генерация JWT токена

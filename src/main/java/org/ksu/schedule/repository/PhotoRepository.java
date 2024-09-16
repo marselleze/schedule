@@ -18,16 +18,8 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     /**
      * Находит фото по email пользователя.
      *
-     * @param email email пользователя
+     * @param id email пользователя
      * @return Optional с фото, если найдено
      */
-    Optional<Photo> findByUserEmail(String email);
-
-    /**
-     * Находит фото по идентификатору пользователя.
-     *
-     * @param userId идентификатор пользователя
-     * @return Optional с фото, если найдено
-     */
-    Optional<Photo> findByUserId(Long userId);
+    Optional<Photo> findById(Long id);
 }

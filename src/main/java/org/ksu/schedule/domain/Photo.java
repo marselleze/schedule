@@ -32,14 +32,6 @@ public class Photo {
      */
     private String url;
 
-    /**
-     * Пользователь, к которому привязана фотография.
-     */
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_email")
-    private User user;
-
     @Override
     public String toString() {
         return "Photo{id=" + id + ", url='" + url + "'}";

@@ -33,21 +33,7 @@ public interface PhotoService {
      * @param id идентификатор фотографии
      * @return объект фотографии
      */
-    Photo getById(int id);
 
-    /**
-     * Получает фотографию по email пользователя.
-     *
-     * @param email email пользователя
-     * @return объект фотографии
-     */
-    Photo getPhotoByEmail(String email);
+    Photo getById(Long id);
 
-    /**
-     * Получает фотографию по идентификатору преподавателя.
-     *
-     * @param id идентификатор преподавателя
-     * @return объект фотографии
-     */
-    Photo getPhotoByTeacherId(int id);
 }
