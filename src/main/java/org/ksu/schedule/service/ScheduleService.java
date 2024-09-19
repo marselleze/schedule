@@ -77,6 +77,8 @@ public interface ScheduleService {
      */
     void deleteById(int id);
 
+    void deleteBySubgroupNumber(String subgroup_number);
+
     /**
      * Удалить расписание по идентификатору подгруппы.
      *

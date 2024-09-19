@@ -1,16 +1,11 @@
-FROM eclipse-temurin:17-jre-alpine
-LABEL maintainer="<PinkyZeus> <<marselleze.88@gmail.com>>"
+# Используем официальный образ OpenJDK 17
+FROM openjdk:17-slim
 
-RUN apk update \
-    && export TZ='Europe/Moscow'\
-    && echo 'Europe/Moscow' > /etc/timezone \
-    && rm -rf /var/cache/
+# Устанавливаем рабочую директорию
+WORKDIR /app
 
-RUN apk --update add nodejs npm
-RUN npm i -g redoc-cli
+# Копируем JAR-файл в контейнер
+COPY target/schedule-0.3.8.jar /app/my-app.jar
 
-COPY docker/schedule-0.0.1-SNAPSHOT.jar /app.jar
-
-CMD ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar ${@}"]
-
-EXPOSE 8088
+# Указываем команду для запуска приложения
+ENTRYPOINT ["java", "-jar", "/app/my-app.jar"]

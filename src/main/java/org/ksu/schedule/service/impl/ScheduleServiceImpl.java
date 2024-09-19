@@ -140,6 +140,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteBySubgroupNumber(String subgroup_number) {
+        scheduleRepository.deleteBySubgroupNumber(subgroup_number);
+    }
+
     /**
      * Удаляет расписание по идентификатору подгруппы.
      *

@@ -64,17 +64,9 @@ public class PhotoServiceImpl implements PhotoService {
             Photo photo = new Photo();
             photo.setUrl(fileUrl);
 
-            // Проверка существования записи с таким user_email в таблице photo
-            Optional<Photo> existingPhotoOptional = photoRepository.findByUserEmail(email);
-            if (existingPhotoOptional.isPresent()) {
-                Photo existingPhoto = existingPhotoOptional.get();
-                existingPhoto.setUrl(fileUrl);
-                photoRepository.save(existingPhoto);
-            } else {
-                photoRepository.save(photo);
-                user.setPhoto(photo);
-                userRepository.save(user);
-            }
+            photoRepository.save(photo);
+            user.setPhoto(photo);
+            userRepository.save(user);
         }
     }
 

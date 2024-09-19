@@ -33,7 +33,7 @@ public class Schedule {
     /**
      * Подгруппа, к которой относится расписание.
      */
-    @ManyToOne(targetEntity = Subgroup.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Subgroup.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "subgroup_id")
     private Subgroup subgroup;
 

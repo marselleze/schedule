@@ -18,4 +18,6 @@ public interface ScheduleImportService {
      * @param files список файлов для импорта
      */
     void importExcel(List<MultipartFile> files);
+
+    void updateSchedule();
 }

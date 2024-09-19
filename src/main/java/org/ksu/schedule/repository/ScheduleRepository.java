@@ -84,6 +84,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
      */
     void deleteBySubgroupId(int subgroup_id);
 
+    void deleteBySubgroupNumber(String subgroup_number);
+
     /**
      * Находит расписание по номеру подгруппы и типу предмета.
      *

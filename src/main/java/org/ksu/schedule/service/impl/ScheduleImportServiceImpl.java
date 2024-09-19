@@ -9,6 +9,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.ksu.schedule.domain.*;
 import org.ksu.schedule.repository.*;
 import org.ksu.schedule.service.ScheduleImportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +35,12 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
     private final ScheduleRepository scheduleRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleImportServiceImpl.class);
 
     //Переменная количества строк добавленных к skipTopRows для коректной работы программы
     static int numRowsAdd = 0;
+
+    private final ScheduleServiceImpl scheduleServiceImpl;
 
     /**
      * Импортирует расписание из Excel файлов.
@@ -380,6 +385,8 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                 } else numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
 
 
+
+
                                 //Следующую строку меняешь на добавление в БД
                                 System.out.println(subGroup);
                                 //Дисциплина
@@ -400,6 +407,12 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                 System.out.println(endTime);
                                 //Аудитория
                                 System.out.println(numAuditorium);
+
+                                logger.info("Удаление расписания по номеру подгруппы: " + subGroup);
+                                //scheduleRepository.deleteBySubgroupId(subgroupRepository.findByNumber(subGroup).getGroup().getId());
+                                //logger.info("Удаление подгрупп по номеру: " + subGroup);
+                                //subgroupRepository.deleteByNumber(subGroup);
+                                scheduleServiceImpl.deleteBySubgroupNumber(subGroup);
 
                                 if (subjectRepository.findByNameAndType(nameDiscipline, disciplineView) != null
                                         && teacherRepository.findByNameAndPost(teacherFCs, teacherPost) != null) {
@@ -432,6 +445,11 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                 scheduleRepository.saveAll(scheduleTransactions);
             }
         }
+    }
+
+    @Override
+    public void updateSchedule() {
+
     }
 
     //Метод проверяющий пустая ячейка или нет

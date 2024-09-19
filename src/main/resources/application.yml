@@ -32,7 +32,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/schedule
     username: root
     password: admin
-    driver-class-name: org.postgresql.Driver
+    #driver-class-name: org.postgresql.Driver
 
   #Подключение к H2 бд через jdbc
   #datasource:

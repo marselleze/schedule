@@ -6,9 +6,13 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.ksu.schedule.config.AuthenticationService;
 import org.ksu.schedule.domain.*;
 import org.ksu.schedule.repository.*;
 import org.ksu.schedule.service.ExcelImportService;
+import org.ksu.schedule.service.ScheduleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +37,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
     private final ScheduleRepository scheduleRepository;
+
+    private final ScheduleServiceImpl scheduleServiceImpl;
+
+    private static final Logger logger = LoggerFactory.getLogger(ExcelImportServiceImpl.class);
 
     //Переменная количества строк добавленных к skipTopRows для коректной работы программы
     static int numRowsAdd = 0;
@@ -292,6 +300,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                             }
                         }
 
+                        groupRepository.deleteByNumber(numGroup);
+
+
                         Group transaction =
                                 Group.builder()
                                         .number(numGroup)
@@ -440,6 +451,34 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     if (!groupTransactions.isEmpty()) {
                                         groupRepository.saveAll(groupTransactions);
                                     }
+
+                                    logger.info("Удаление расписания по номеру подгруппы: " + subGroup);
+                                    Subgroup subgroupForDelete = subgroupRepository.findByNumber(subGroup);
+
+                                    if (subgroupForDelete != null) {
+                                        // Удаляем все записи расписания, связанные с подгруппой
+                                        List<Schedule> schedules = scheduleRepository.findBySubgroupId(subgroupForDelete.getId());
+                                        logger.info("Найдено расписаний для удаления: " + schedules.size());
+
+                                        for (Schedule schedule : schedules) {
+                                            scheduleRepository.delete(schedule);
+                                        }
+
+                                        logger.info("Расписания удалены");
+
+                                        // Удаляем подгруппу после удаления всех связанных расписаний
+                                        logger.info("Удаление подгруппы с номером: " + subGroup);
+                                        subgroupRepository.delete(subgroupForDelete);
+                                        logger.info("Подгруппа удалена");
+                                    }
+
+
+
+
+
+
+
+
 
                                     Subgroup subgroupTransaction = Subgroup.builder()
                                             .number(subGroup)

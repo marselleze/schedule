@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Класс, представляющий сущность подгруппы в системе.
  *
@@ -39,6 +41,10 @@ public class Subgroup {
     @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @OneToMany(mappedBy = "subgroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules;
+
 
     /**
      * Устанавливает свойства подгруппы на основе другой подгруппы.

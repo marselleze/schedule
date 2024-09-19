@@ -45,4 +45,6 @@ public interface SubgroupRepository extends JpaRepository<Subgroup, Integer> {
      * @return список подгрупп
      */
     List<Subgroup> findByGroupNumber(String groupNumber);
+
+    void deleteByNumber(String numSubGroup);
 }

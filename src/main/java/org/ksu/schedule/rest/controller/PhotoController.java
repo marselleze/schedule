@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -74,45 +76,24 @@ public class PhotoController {
                 System.out.println("Resource URI: " + filePath.toUri());
 
                 if (resource.exists()) {
+                    String contentType = Files.probeContentType(filePath);
+                    if (contentType == null) {
+                        contentType = "application/octet-stream"; // В случае если тип не распознается
+                    }
+
                     return ResponseEntity.ok()
+                            .contentType(MediaType.parseMediaType(contentType))
                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                             .body(resource);
+
                 } else {
                     return ResponseEntity.notFound().build();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 return ResponseEntity.badRequest().build();
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
-     * Скачивание фотографии по электронной почте пользователя.
-     *
-     * @param email адрес электронной почты пользователя
-     * @return ResponseEntity с ресурсом фотографии
-     */
-    @GetMapping("/download/email")
-    public ResponseEntity<Resource> getPhotoByEmail(@RequestParam String email) {
-        Photo photo = photoService.getPhotoByEmail(email);
-        if (photo != null) {
-            try {
-                Path filePath = Paths.get(photo.getUrl()).toAbsolutePath().normalize();
-                Resource resource = new UrlResource(filePath.toUri());
-
-                if (resource.exists()) {
-                    return ResponseEntity.ok()
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                            .body(resource);
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return ResponseEntity.badRequest().build();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         } else {
             return ResponseEntity.notFound().build();
