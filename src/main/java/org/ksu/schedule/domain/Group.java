@@ -47,7 +47,9 @@ public class Group {
     @Column(name = "profile")
     private String profile;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Subgroup> subgroups;
+    //@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Subgroup> subgroups;
+
+
 
 }

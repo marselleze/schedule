@@ -24,4 +24,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional с пользователем
      */
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u WHERE u.lastName = :lastName AND u.firstName LIKE :initials AND u.middleName LIKE :middleInitial")
+    Optional<User> findByFullName(@Param("lastName") String lastName,
+                                  @Param("initials") String initials,
+                                  @Param("middleInitial") String middleInitial);
 }

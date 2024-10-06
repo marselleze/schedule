@@ -81,6 +81,7 @@ public class AuthenticationService {
         // Возвращаем ответ с токеном
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .id(savedUser.getId())
                 .build();
     }
 
@@ -104,6 +105,6 @@ public class AuthenticationService {
         logger.info("User found: {}", user);
         var jwtToken = jwtService.generateToken(user);
         logger.info("Generated token: {}", jwtToken);
-        return new AuthenticationResponse(jwtToken);
+        return new AuthenticationResponse(jwtToken, user.getId());
     }
 }

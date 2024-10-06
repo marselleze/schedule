@@ -1,5 +1,6 @@
 package org.ksu.schedule.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +27,8 @@ public class GroupDto {
     private String number;
     private String direction;
     private String profile;
-    private List<SubgroupDto> subgroups;
+    //@JsonBackReference
+    //private List<SubgroupDto> subgroups;
 
     /**
      * Преобразует сущность {@link Group} в DTO {@link GroupDto}.
@@ -39,18 +41,18 @@ public class GroupDto {
             return null;
         }
 
-        List<SubgroupDto> subgroupDtos = group.getSubgroups() != null
-                ? group.getSubgroups().stream()
-                .map(SubgroupDto::toDto)
-                .collect(Collectors.toList())
-                : null;
+//        List<SubgroupDto> subgroupDtos = group.getSubgroups() != null
+//                ? group.getSubgroups().stream()
+//                .map(SubgroupDto::toDto)
+//                .collect(Collectors.toList())
+//                : null;
 
         return GroupDto.builder()
                 .id(group.getId())
                 .number(group.getNumber())
                 .direction(group.getDirection())
                 .profile(group.getProfile())
-                .subgroups(subgroupDtos)
+                //.subgroups(subgroupDtos)
                 .build();
     }
 
@@ -65,18 +67,18 @@ public class GroupDto {
             return null;
         }
 
-        List<Subgroup> subgroups = groupDto.getSubgroups() != null
-                ? groupDto.getSubgroups().stream()
-                .map(SubgroupDto::toDomain)
-                .collect(Collectors.toList())
-                : null;
+//        List<Subgroup> subgroups = groupDto.getSubgroups() != null
+//                ? groupDto.getSubgroups().stream()
+//                .map(SubgroupDto::toDomain)
+//                .collect(Collectors.toList())
+//                : null;
 
         return new Group(
                 groupDto.getId(),
                 groupDto.getNumber(),
                 groupDto.getDirection(),
-                groupDto.getProfile(),
-                subgroups
+                groupDto.getProfile()
+                //subgroups
         );
     }
 }

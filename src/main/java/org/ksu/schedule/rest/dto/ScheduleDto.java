@@ -1,5 +1,6 @@
 package org.ksu.schedule.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -92,4 +92,20 @@ public class UserServiceImpl implements UserService {
         logger.info("Password for user {} was updated. Encoded password: {}" + user.getEmail() + encodedPassword);
     }
 
+    @Override
+    public User findUserByFullName(String fullName) {
+        String[] nameParts = fullName.split(" ");
+        if (nameParts.length != 3) {
+            throw new IllegalArgumentException("Полное имя должно быть в формате: Фамилия И.О.");
+        }
+
+        String lastName = nameParts[0];
+        String initials = nameParts[1] + "%";  // Инициал имени
+        String middleInitial = nameParts[2] + "%";  // Инициал отчества
+
+        return userRepository.findByFullName(lastName, initials, middleInitial).orElseThrow();
+    }
+
+
+
 }

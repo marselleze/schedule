@@ -1,11 +1,18 @@
-# Используем официальный образ OpenJDK 17
-FROM openjdk:17-slim
+# Используем образ OpenJDK
+FROM openjdk:17-jdk-slim
 
-# Устанавливаем рабочую директорию
+# Указываем рабочую директорию
 WORKDIR /app
 
-# Копируем JAR-файл в контейнер
-COPY target/schedule-0.3.8.jar /app/my-app.jar
+# Копируем файл pom.xml и загружаем зависимости
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Указываем команду для запуска приложения
-ENTRYPOINT ["java", "-jar", "/app/my-app.jar"]
+# Копируем код приложения
+COPY src ./src
+
+# Собираем приложение
+RUN mvn clean package -DskipTests
+
+# Указываем команду запуска приложения
+CMD ["java", "-jar", "target/schedule-1.0.2.jar"]

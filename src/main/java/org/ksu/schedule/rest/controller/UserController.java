@@ -3,6 +3,7 @@ package org.ksu.schedule.rest.controller;
 import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.User;
 import org.ksu.schedule.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,5 +68,17 @@ public class UserController {
                                                         @RequestParam String info) {
         return ResponseEntity.ok().body(userService.updateTeacher(email, lastName, firstName, middleName, info));
     }
-    
+
+    @GetMapping("/api/v1/user/teacher/fullName")
+    public ResponseEntity<User> getTeacherByFullName(
+            @RequestParam("fullName") String fullName) {
+        User user = userService.findUserByFullName(fullName);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
 }

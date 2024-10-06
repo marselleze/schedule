@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +44,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final Logger logger = LoggerFactory.getLogger(ExcelImportServiceImpl.class);
 
     //Переменная количества строк добавленных к skipTopRows для коректной работы программы
+    //Значение задаётся в numCols
     static int numRowsAdd = 0;
 
     //Метод проверяющий пустая ячейка или нет
@@ -74,7 +76,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             if (!fullCell(cell))
                 continue;
             //С помощью флага пропускаем все строки до строки с "День недели"
-            if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains("Д")) {
+            if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains("недел")) {
                 return r;
             }
         }
@@ -114,7 +116,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         // Переменная для цикла правильного определения столбцов
         int extraCols;
         ///////////////   Цикл   //////////////////
-        for(int i = 0; ;i++) {
+        for (int i = 0; ; i++) {
             //Получаем строку
             XSSFRow row = sheet.getRow(skipTopRows(sheet) + i);
 
@@ -124,7 +126,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 //Получаем ячейку номера cols
                 XSSFCell cell = row.getCell(extraCols);
 
-                if (extraCols == 0){
+                if (extraCols == 0) {
                     break;
                 }
                 //Пропускаем если ячейка пустая или внутри неё пробел
@@ -141,10 +143,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     //Метод считающий кол-во подгрупп
-    public static int countSubGroups(XSSFSheet sheet){
+    public static int countSubGroups(XSSFSheet sheet) {
         int countSubGroups = 0;
         XSSFRow row = sheet.getRow(skipTopRows(sheet) + numRowsAdd);
-        for (int c = 2; c < numCols(sheet); c += 2){
+        for (int c = 2; c < numCols(sheet); c += 2) {
             //Получаем ячейку номера c
             XSSFCell cell = row.getCell(c);
             if (cell.getStringCellValue().contains("руп"))
@@ -222,6 +224,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     String teacherPost = "";
                     String weekView = "";
                     String numAuditorium = "";
+                    boolean GroupExists = false;
 
                     //Счётчик листов
                     for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
@@ -231,7 +234,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         XSSFSheet sheet = workbook.getSheetAt(numSheet);
                         //вывод кол-во подгрупп
                         //System.out.println(countSubGroups(sheet));
-                        ////// Чтение используя for //////
+                        ////// Чтение используя for //////\
 
                         // Создаём переменную хронящую номер последний строки(кол-во строк)
                         int rows = skipLowRows(sheet);
@@ -243,15 +246,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         //int indexFirstAuditCell = 0;
                         //Создаём переменную, номера подгруппы, для проходки по столбцам
                         int numSubGroup = 1;
+                        //переменная numSubGroup для определения номера группы
+                        int numSubGroupForNumGroup = 2;
+                        //Разбиваем направление
                         int indexProf = 0;
                         //Разбиваем строку на список
-                        List<String> fullName = new ArrayList<>(List.of(sheet.getRow(skipTopRows(sheet)).getCell(2).getStringCellValue().replace("\n", " ").split(" ")));
+                        List<String> fullName = new ArrayList<>(List.of(sheet.getRow(skipTopRows(sheet))
+                                .getCell(2).getStringCellValue().replace("\n", " ")
+                                .split(" ")));
                         //Удаляем лишние пробелы
-                        fullName.remove("");
-                        //Удаляем лишние переносы строк
-           /* for (int i = 0; i < fullName.size(); i++) {
-                fullName.set(i, fullName.get(i).trim());
-            }*/
+                        while(fullName.contains(""))
+                            fullName.remove("");
 
                         //i - индекс подстроки в списке
                         for (int i = 0; i < fullName.size(); i++) {
@@ -285,31 +290,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         //Профиль
                         System.out.println(nameProfile);
 
-                        for (int c = 2; c < cols - 1; c += 2){
-
-                            if (!fullCell(sheet.getRow(skipTopRows(sheet) + numRowsAdd).getCell(c)))
-                                continue;
-
-                            String[] fullGroup = sheet.getRow(skipTopRows(sheet) + numRowsAdd).getCell(c).getStringCellValue().split(" ");
-                            String groupAndSub = fullGroup[1];
-                            fullGroup = groupAndSub.split("\\.");
-                            if(!(numGroup.equals(fullGroup[0]))) {
-                                numGroup = fullGroup[0];
-                                //Номер группы
-                                System.out.println(numGroup);
-                            }
-                        }
-
-                        groupRepository.deleteByNumber(numGroup);
 
 
-                        Group transaction =
-                                Group.builder()
-                                        .number(numGroup)
-                                        .direction(nameDirection)
-                                        .profile(nameProfile)
-                                        .build();
-                        groupTransactions.add(transaction);
+
 
                         //r-строки, с-столбцы
                         for (int r = skipTopRows(sheet) + numRowsAdd; r < rows + 1; r++) {
@@ -318,10 +301,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                 controlWeekView = r;
 
                             //выходим из цикла если прошлись по всем подгруппам
-                            if(numSubGroup > countSubGroups(sheet))
+                            if (numSubGroup > countSubGroups(sheet))
                                 break;
                             //Если прошлись по всем строкам возвращаемся в первую строку и меняем номер подгруппы
-                            if (r == rows){
+                            if (r == rows) {
                                 r = skipTopRows(sheet) + numRowsAdd;
                                 controlWeekView = skipTopRows(sheet) + numRowsAdd + 1;
                                 numSubGroup++;
@@ -334,25 +317,72 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                             //Получаем строку номера r
                             XSSFRow row = sheet.getRow(r);
                             //Если строка пустая, пропускаем
-                            if (row == null) continue;
+                            if (row == null)
+                                continue;
+
+                            /////Получаем номер группы////
+                            if (r == skipTopRows(sheet) + numRowsAdd && numSubGroupForNumGroup <= countSubGroups(sheet) * 2) {
+                                String[] fullGroup = sheet.getRow(skipTopRows(sheet) + numRowsAdd)
+                                        .getCell(numSubGroupForNumGroup)
+                                        .getStringCellValue()
+                                        .split(" ");
+                                String groupAndSub = fullGroup[1];
+                                fullGroup = groupAndSub.split("\\.");
+                                numSubGroupForNumGroup += 2;
+                                if (!(numGroup.equals(fullGroup[0]))) {
+                                    numGroup = fullGroup[0];
+                                    //Номер группы
+                                    System.out.println(numGroup);
+
+                                    Group transaction =
+                                            Group.builder()
+                                                    .number(numGroup)
+                                                    .direction(nameDirection)
+                                                    .profile(nameProfile)
+                                                    .build();
+                                    groupTransactions.add(transaction);
+
+                                    for (Group group : groupTransactions) {
+                                        if (group.getNumber().equals(transaction.getNumber())) {
+                                            GroupExists = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            }
+
+
 
                             for (int c = 0; c < cols; c++) {
                                 //Меняем номер ячейки в зависимости от номера подгруппы
-                                if (c == 2 && c != numSubGroup * 2) c = numSubGroup * 2;
+                                if (c == 2 && c != numSubGroup * 2)
+                                    c = numSubGroup * 2;
                                 //Если вышли за пределы подгруппы, выходим из цикла
-                                if (c > numSubGroup * 2) break;
+                                if (c > numSubGroup * 2)
+                                    break;
 
                                 //Получаем ячейку номера c
                                 XSSFCell cell = row.getCell(c);
 
                                 //Проверяем есть ли что-то в ячейке с аудиторией для первой подгруппы, чтобы определить общая пара или нет
-                                if (!fullCell(row.getCell(3)) && !fullCell(row.getCell(4))) genPara = true;
-
+                                if (fullCell(row.getCell(2)) && fullCell(row.getCell(numCols(sheet) - 1))) {
+                                    int countI = 0;
+                                    for (int i = 4; i < cols - 1; i += 2) {
+                                        if (fullCell(row.getCell(i))) {
+                                            countI++;
+                                        }
+                                    }
+                                    if (countI == 0)
+                                        genPara = true;
+                                }
                                 //Меняем значение ячеек с дисциплиной и аудиторией если пара общая
-                                if (genPara && c == numSubGroup * 2) cell = row.getCell(2);
+                                if (genPara && c == numSubGroup * 2)
+                                    cell = row.getCell(2);
 
                                 //Пропускаем если ячейка пустая или внутри неё пробел
-                                if (!fullCell(cell)) continue;
+                                if (!fullCell(cell))
+                                    continue;
 
                                 //Не выводим "Ауд."
                                 if (r == skipTopRows(sheet) + numRowsAdd && cell.getStringCellValue().contains("А")) {
@@ -373,7 +403,23 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                             //Время конца
                                             endTime = fullTime[1];
                                             break;
+                                        case "8.00 - 9.30":
+                                            time = "08:00 09:30";
+                                            fullTime = time.split(" ");
+                                            //Время начала
+                                            startTime = fullTime[0];
+                                            //Время конца
+                                            endTime = fullTime[1];
+                                            break;
                                         case "09.40 - 11.10":
+                                            time = "09:40 11:10";
+                                            fullTime = time.split(" ");
+                                            //Время начала
+                                            startTime = fullTime[0];
+                                            //Время конца
+                                            endTime = fullTime[1];
+                                            break;
+                                        case "9.40 - 11.10":
                                             time = "09:40 11:10";
                                             fullTime = time.split(" ");
                                             //Время начала
@@ -413,7 +459,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                             //Время конца
                                             endTime = fullTime[1];
                                             break;
-                                        case "18.10 – 19.40":
+                                        case "18.10 - 19.40":
                                             time = "18:10 19:40";
                                             fullTime = time.split(" ");
                                             //Время начала
@@ -421,16 +467,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                             //Время конца
                                             endTime = fullTime[1];
                                             break;
-                                        case "8.00 - 9.30":
-                                            time = "08:00 09:30";
-                                            fullTime = time.split(" ");
-                                            //Время начала
-                                            startTime = fullTime[0];
-                                            //Время конца
-                                            endTime = fullTime[1];
-                                            break;
-                                        case "9.40 - 11.10":
-                                            time = "09:40 11:10";
+                                        case "19.50 - 21.20":
+                                            time = "19:50 21:20";
                                             fullTime = time.split(" ");
                                             //Время начала
                                             startTime = fullTime[0];
@@ -448,33 +486,39 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     //Получем номер подгруппы
                                     subGroup = fullNumGroup[1];
 
-                                    if (!groupTransactions.isEmpty()) {
+                                    Optional<Group> groupInDb = Optional.ofNullable(groupRepository.findByNumber(numGroup));
+
+                                    if (!groupTransactions.isEmpty() && !groupInDb.isPresent()) {
                                         groupRepository.saveAll(groupTransactions);
                                     }
 
+                                    //Здесь было прошлое удаление
                                     logger.info("Удаление расписания по номеру подгруппы: " + subGroup);
                                     Subgroup subgroupForDelete = subgroupRepository.findByNumber(subGroup);
 
                                     if (subgroupForDelete != null) {
-                                        // Удаляем все записи расписания, связанные с подгруппой
-                                        List<Schedule> schedules = scheduleRepository.findBySubgroupId(subgroupForDelete.getId());
-                                        logger.info("Найдено расписаний для удаления: " + schedules.size());
+                                        Group group = subgroupForDelete.getGroup(); // Получаем группу, к которой относится подгруппа
 
-                                        for (Schedule schedule : schedules) {
-                                            scheduleRepository.delete(schedule);
+                                        // Проверяем, совпадает ли номер подгруппы с номером группы
+                                        if (!subGroup.equals(group.getNumber())) {
+                                            // Удаляем все записи расписания, связанные с подгруппой
+                                            List<Schedule> schedules = scheduleRepository.findBySubgroupId(subgroupForDelete.getId());
+                                            logger.info("Найдено расписаний для удаления: " + schedules.size());
+
+                                            for (Schedule schedule : schedules) {
+                                                scheduleRepository.delete(schedule);
+                                            }
+
+                                            logger.info("Расписания удалены");
+
+                                            // Удаляем подгруппу после удаления всех связанных расписаний
+                                            logger.info("Удаление подгруппы с номером: " + subGroup);
+                                            subgroupRepository.delete(subgroupForDelete);
+                                            logger.info("Подгруппа удалена");
+                                        } else {
+                                            logger.info("Номер подгруппы совпадает с номером группы. Удаление отменено.");
                                         }
-
-                                        logger.info("Расписания удалены");
-
-                                        // Удаляем подгруппу после удаления всех связанных расписаний
-                                        logger.info("Удаление подгруппы с номером: " + subGroup);
-                                        subgroupRepository.delete(subgroupForDelete);
-                                        logger.info("Подгруппа удалена");
                                     }
-
-
-
-
 
 
 
@@ -495,10 +539,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                                     if (!SubgroupExists) {
                                         subgroupTransactions.add(subgroupTransaction);
+                                        subgroupRepository.saveAllAndFlush(subgroupTransactions);
                                     } else {
                                         continue;
                                     }
-                                    subgroupRepository.saveAllAndFlush(subgroupTransactions);
+
+
+                                    //groupRepository.deleteByNumber(numGroup);
 
                                     continue;
                                 }
@@ -508,26 +555,22 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     int indexView = 0;
                                     int indexPost = 0;
                                     //Заменяем переносы строк
-                                    String fullNameDiscipStr = cell.getStringCellValue().replace("\n", "");
+                                    String fullNameDiscipStr = cell.getStringCellValue().replace("\n", " ");
                                     //Замена вида пары при физ-ре
                                     if (fullNameDiscipStr.contains("(общая физическая подготовка)"))
-                                        fullNameDiscipStr = fullNameDiscipStr.replace("(общая физическая подготовка)", " (ПР) ");
+                                        fullNameDiscipStr = fullNameDiscipStr.replace("(общая физическая подготовка)", "(ПР)");
                                     //Разбиваем строку на список
                                     List<String> fullNameDiscip = new ArrayList<>(List.of(fullNameDiscipStr.split(" ")));
-                                    //Удаляем лишние переносы строк
-                                    fullNameDiscip.remove("");
-                                    fullNameDiscip.remove(" ");
-                                    for (int i = 0; i < fullNameDiscip.size(); i++) {
-                                        fullNameDiscip.set(i, fullNameDiscip.get(i).trim());
-                                    }
+                                    //Удаляем лишние пробелы
+                                    while(fullNameDiscip.contains(""))
+                                        fullNameDiscip.remove("");
                                     //i - индекс подстроки в списке
                                     for (int i = 0; i < fullNameDiscip.size(); i++) {
                                         //Запоминаем индекс вида пары и должности препода
                                         if (fullNameDiscip.get(i).contains("(")) {
-                                                indexView = i;
-                                                indexPost = i + 1;
-                                                break;
-
+                                            indexView = i;
+                                            indexPost = i + 1;
+                                            break;
                                         }
                                     }
                                     if (fullNameDiscip.get(indexPost + 1).contains(".")) {
@@ -563,6 +606,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                         teacherFCs = teacherFCs.substring(0, teacherFCs.length() - 1);
                                     //Вывод должности преподователя
                                     teacherPost = fullNameDiscip.get(indexPost);
+                                    if (teacherPost.contains("ст.пр"))
+                                        teacherPost = "ст.пр";
                                     String teacherPostSubStr = teacherPost.substring(teacherPost.length() - 1);
                                     if (teacherPostSubStr.contains("."))
                                         teacherPost = teacherPost.substring(0, teacherPost.length() - 1);
@@ -593,7 +638,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                 //Вывод аудитории
                                 if (genPara) {
                                     numAuditorium = String.valueOf(getValue(row.getCell(numCols(sheet) - 1)));
-                                } else numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
+                                } else
+                                    numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
 
                                 Subject subjTransaction = Subject.builder()
                                         .name(nameDiscipline)
@@ -610,28 +656,30 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                                 if (!SubjectExists) {
                                     subjectTransactions.add(subjTransaction);
-                                } else {
-                                    continue;
                                 }
-                                subjectTransactions.add(subjTransaction);
+
                                 subjectRepository.saveAll(subjectTransactions);
 
                                 Teacher teachersTransaction = Teacher.builder()
                                         .name(teacherFCs)
                                         .post(teacherPost)
                                         .build();
+                                System.out.println(teachersTransaction);
                                 boolean teacherExists = teacherRepository.existsByName(teachersTransaction.getName());
+                                System.out.println(teacherExists);
+
 
                                 if (!teacherExists) {
                                     teacherTransactions.add(teachersTransaction);
-                                } else {
-                                    continue;
                                 }
+
                                 List<Teacher> uniqueTeachers = teacherTransactions.stream()
                                         .distinct()
                                         .collect(Collectors.toList());
+                                System.out.println(uniqueTeachers);
                                 teacherRepository.saveAll(uniqueTeachers);
 
+                                /*
                                 //Следующую строку меняешь на добавление в БД
                                 System.out.println(subGroup);
                                 //Дисциплина
@@ -652,6 +700,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                 System.out.println(endTime);
                                 //Аудитория
                                 System.out.println(numAuditorium);
+                                 */
 
                                 //Выводим информацию из ячейки, в зависимости от типа
                                 //System.out.println(getValue(cell));
@@ -661,13 +710,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                         }
                     }
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
-            if (!scheduleTransactions.isEmpty()) {
-                scheduleRepository.saveAll(scheduleTransactions);
-            }
         }
     }
 }

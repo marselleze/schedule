@@ -38,6 +38,8 @@ public interface SubgroupRepository extends JpaRepository<Subgroup, Integer> {
      */
     Subgroup findByNumber(String number);
 
+    Subgroup findByNumberAndGroupId(String number, int group_id);
+
     /**
      * Находит подгруппы по номеру группы.
      *

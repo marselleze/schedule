@@ -18,20 +18,20 @@ spring:
           auth: true
 
 #DeployConfig
-  #datasource:
-    #url: jdbc:postgresql://localhost:5432/scheduleproject
-    #username: pinkyzeus
-    #password: bdd185-kv114
-    #driver-class-name: org.postgresql.Driver
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scheduleproject
+    username: pinkyzeus
+    password: bdd185-kv114
+    driver-class-name: org.postgresql.Driver
 
 
 
 
 #TestConfig
-  datasource:
-    url: jdbc:postgresql://localhost:5432/schedule
-    username: root
-    password: admin
+  #datasource:
+    #url: jdbc:postgresql://localhost:5432/schedule
+    #username: root
+    #password: admin
     #driver-class-name: org.postgresql.Driver
 
   #Подключение к H2 бд через jdbc
@@ -48,8 +48,8 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   mvc:
