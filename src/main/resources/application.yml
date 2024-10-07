@@ -1,11 +1,44 @@
 # Конфигурационный файл
 server:
   port: 8081
+  #address: 188.225.24.65 # IP адрес сервера
 spring:
+  config:
+    import: "optional:classpath:/application-secrets.yml"
 
-  # Подключение к H2 бд через jdbc
+  mail:
+    host: smtp.timeweb.ru # SMTP сервер
+    port: 587
+    username: ksu@24schedule.ru
+    password: 95wnqo37s0
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+
+#DeployConfig
+  #datasource:
+    #url: jdbc:postgresql://localhost:5432/scheduleproject
+    #username: pinkyzeus
+    #password: bdd185-kv114
+    #driver-class-name: org.postgresql.Driver
+
+
+
+
+#TestConfig
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:postgresql://localhost:5432/schedule
+    username: root
+    password: admin
+    #driver-class-name: org.postgresql.Driver
+
+  #Подключение к H2 бд через jdbc
+  #datasource:
+    #driver-class-name: org.h2.Driver
+    #url: jdbc:h2:mem:testdb
+
 
   # Включение liquibase и установка основного файла
   liquibase:
@@ -15,8 +48,37 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  servlet:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
+
+  http:
+    multipart:
+      enabled: true
+
+
+file:
+  upload-dir : uploads/
+
+
+
+#connection:
+  #names:
+    #- test
+    #- live
+  #addresses:
+    #test: https://localhost:8088
+    #live: https://24schedule.ru
+
 
 
 

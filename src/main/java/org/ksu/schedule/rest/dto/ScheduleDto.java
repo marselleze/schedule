@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ksu.schedule.domain.Schedule;
-import org.ksu.schedule.domain.Subgroup;
-import org.ksu.schedule.domain.Subject;
-import org.ksu.schedule.domain.Teacher;
 
+/**
+ * DTO класс для представления расписания.
+ *
+ * @version 1.0
+ * @autor Егор Гришанов
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,30 +19,21 @@ import org.ksu.schedule.domain.Teacher;
 public class ScheduleDto {
 
     private int id;
-
     private String parity;
-
     private SubgroupDto subgroupDto;
-
     private SubjectDto subjectDto;
-
     private TeacherDto teacherDto;
-
     private String dayWeek;
-
     private String timeStart;
-
     private String timeEnd;
+    private String classroom;
 
-    private int number;
-
-    private int classroom;
-
-
-
-
-
-
+    /**
+     * Преобразует сущность {@link Schedule} в DTO {@link ScheduleDto}.
+     *
+     * @param schedule объект расписания
+     * @return DTO объект расписания
+     */
     public static ScheduleDto toDto(Schedule schedule) {
         return new ScheduleDto(
                 schedule.getId(),
@@ -50,12 +44,27 @@ public class ScheduleDto {
                 schedule.getDayWeek(),
                 schedule.getTimeStart(),
                 schedule.getTimeEnd(),
-                schedule.getNumber(),
                 schedule.getClassroom()
         );
-
-
     }
 
-
+    /**
+     * Преобразует DTO {@link ScheduleDto} в сущность {@link Schedule}.
+     *
+     * @param scheduleDto DTO объект расписания
+     * @return сущность расписания
+     */
+    public static Schedule toDomain(ScheduleDto scheduleDto) {
+        return new Schedule(
+                scheduleDto.getId(),
+                scheduleDto.getParity(),
+                SubgroupDto.toDomain(scheduleDto.getSubgroupDto()),
+                SubjectDto.toDomain(scheduleDto.getSubjectDto()),
+                TeacherDto.toDomain(scheduleDto.getTeacherDto()),
+                scheduleDto.getDayWeek(),
+                scheduleDto.getTimeStart(),
+                scheduleDto.getTimeEnd(),
+                scheduleDto.getClassroom()
+        );
+    }
 }

@@ -6,6 +6,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="2024-04-05--0001-batch" author="PinkyZeus">
+        <validCheckSum>9:a82e5083285d69956c240e80a5aaff73</validCheckSum>
+
         <preConditions>
             <not>
                 <tableExists tableName="batch"/>
@@ -14,7 +16,7 @@
 
         <createTable tableName="batch">
             <column name="id"
-                    type="NUMERIC(19, 0)"
+                    type="INTEGER(19, 0)"
                     autoIncrement="true">
                 <constraints primaryKey="true"
                              nullable="false"
@@ -24,7 +26,7 @@
             </column>
 
             <column name="number"
-                    type="NUMERIC(5, 0)">
+                    type="VARCHAR(20)">
                 <constraints nullable="false"
                              unique="true"/>
             </column>

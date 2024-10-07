@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: scheduleproject
+      POSTGRES_USER: pinkyzeus
+      POSTGRES_PASSWORD: bdd185-kv114
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    image: my-spring-app:latest
+    container_name: spring-app
+    depends_on:
+      - db
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/scheduleproject
+      SPRING_DATASOURCE_USERNAME: pinkyzeus
+      SPRING_DATASOURCE_PASSWORD: bdd185-kv114
+
+volumes:
+  postgres-data:

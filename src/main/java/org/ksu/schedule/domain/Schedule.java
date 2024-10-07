@@ -1,11 +1,14 @@
 package org.ksu.schedule.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+/**
+ * Класс, представляющий сущность расписания в системе.
+ *
+ * @version 1.0
+ * @author Егор Гришанов
+ */
 @Data
 @Entity
 @Builder
@@ -14,38 +17,70 @@ import lombok.NoArgsConstructor;
 @Table(name = "schedule")
 public class Schedule {
 
+    /**
+     * Уникальный идентификатор расписания.
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /**
+     * Четность недели.
+     */
     @Column(name = "parity")
     private String parity;
 
-    @OneToOne(targetEntity = Subgroup.class, fetch = FetchType.LAZY)
+    /**
+     * Подгруппа, к которой относится расписание.
+     */
+    @ManyToOne(targetEntity = Subgroup.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "subgroup_id")
     private Subgroup subgroup;
 
+    /**
+     * Предмет, включенный в расписание.
+     */
     @ManyToOne(targetEntity = Subject.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
+    /**
+     * Преподаватель, ведущий предмет.
+     */
     @ManyToOne(targetEntity = Teacher.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
+    /**
+     * День недели.
+     */
     @Column(name = "day_week")
     private String dayWeek;
 
-    @Column(name = "time_Start")
+    /**
+     * Время начала занятия.
+     */
+    @Column(name = "time_start")
     private String timeStart;
 
-    @Column(name = "time_End")
+    /**
+     * Время окончания занятия.
+     */
+    @Column(name = "time_end")
     private String timeEnd;
 
-    @Column(name = "number")
-    private int number;
-
+    /**
+     * Аудитория, в которой проходит занятие.
+     */
     @Column(name = "classroom")
-    private int classroom;
+    private String classroom;
 
+    /**
+     * Создает объект расписания на основе текущего состояния.
+     *
+     * @return объект {@link Schedule}
+     */
+    public Schedule build() {
+        return new Schedule(this.id, this.parity, this.subgroup, this.subject, this.teacher, this.dayWeek, this.timeStart, this.timeEnd, this.classroom);
+    }
 }

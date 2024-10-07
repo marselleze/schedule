@@ -6,6 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="2024-04-05--0004-subject" author="PinkyZeus">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions>
             <not>
                 <tableExists tableName="subject"/>
@@ -14,7 +15,7 @@
 
         <createTable tableName="subject">
             <column name="id"
-                    type="NUMERIC(19, 0)"
+                    type="INTEGER(19, 0)"
                     autoIncrement="true">
                 <constraints primaryKey="true"
                              nullable="false"

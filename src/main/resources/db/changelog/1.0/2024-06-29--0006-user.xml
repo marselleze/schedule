@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-06-29--0006-user" author="PinkyZeus">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions>
+            <not>
+                <tableExists tableName="user"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="user">
+            <column name="id"
+                    type="INTEGER"
+                    autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             unique="true"
+                />
+
+            </column>
+
+            <column name="first_name"
+                    type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_name"
+                    type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="middle_name"
+                    type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="email"
+                    type="VARCHAR(255)">
+                <constraints nullable="true"
+                unique="true"/>
+            </column>
+
+            <column name="password"
+                    type="varchar(30)">
+                <constraints nullable="false"
+                             unique="false"/>
+            </column>
+
+            <column name="info"
+                    type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="group_number"
+                    type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sub_number"
+                    type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo_id"
+                    type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+            <column name="teacher_id"
+                    type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+
+
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="group_number" constraintName="fk_user_batch"
+                                 referencedTableName="batch"
+                                 referencedColumnNames="number" deleteCascade="true"/>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="subgroup_id" constraintName="fk_user_subgroup"
+                                 referencedTableName="subgroup"
+                                 referencedColumnNames="sub_number"/>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="id" constraintName="fk_user_photo" referencedTableName="photo"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="teacher_id" constraintName="fk_user_teacher"
+                                 referencedTableName="teacher"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+</databaseChangeLog>

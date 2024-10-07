@@ -5,7 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="2024-04-05--0005-schedule" author="PinkyZeus">
+    <changeSet id="2024-04-05--0005-schedule" author="PinkyZeus" >
+        <validCheckSum>ANY</validCheckSum>
 
         <preConditions>
             <not>
@@ -15,7 +16,7 @@
 
         <createTable tableName="schedule">
             <column name="id"
-                    type="NUMERIC(19, 0)"
+                    type="INTEGER(19, 0)"
                     autoIncrement="true">
                 <constraints primaryKey="true"
                              nullable="false"/>
@@ -29,49 +30,47 @@
             </column>
 
             <column name="subgroup_id"
-                    type="NUMERIC(19, 0)">
-                <constraints nullable="false"
-                             foreignKeyName="fk_schedule_subgroup"
-                             references="subgroup(id)"
-                             deleteCascade="true"/>
+                    type="INTEGER(19, 0)">
+                <constraints nullable="false"/>
             </column>
             
             <column name="subject_id"
-                    type="NUMERIC(100, 0)">
-                <constraints nullable="false"
-                             foreignKeyName="fk_schedule_subject"
-                             references="subject(id)"
-                             deleteCascade="true"/>
+                    type="INTEGER(19, 0)">
+                <constraints nullable="false"/>
             </column>
             <column name="teacher_id"
-                    type="NUMERIC(100, 0)">
-                <constraints nullable="false"
-                             foreignKeyName="fk_schedule_teacher"
-                             references="teacher(id)"
-                             deleteCascade="true"/>
+                    type="INTEGER(19, 0)">
+                <constraints nullable="true"/>
             </column>
             <column name="day_week"
                     type="VARCHAR(255)">
                 <constraints nullable="false"
                              unique="false"/>
             </column>
-            <column name="time_Start"
-                    type="TIME">
+            <column name="time_start"
+                    type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="time_End"
-                    type="TIME">
-                <constraints nullable="false"/>
-            </column>
-            <column name="number"
-                    type="NUMERIC(2, 0)">
+            <column name="time_end"
+                    type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="classroom"
-                    type="NUMERIC(4, 0)">
-                <constraints nullable="false"/>
+                    type="VARCHAR(255)">
+                <constraints nullable="true"/>
             </column>
         </createTable>
+
+        <addForeignKeyConstraint baseTableName="schedule" baseColumnNames="subgroup_id" constraintName="fk_schedule_subgroup"
+                                 referencedTableName="subgroup"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+        <addForeignKeyConstraint baseTableName="schedule" baseColumnNames="subject_id" constraintName="fk_schedule_subject"
+                                 referencedTableName="subject"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+        <addForeignKeyConstraint baseTableName="schedule" baseColumnNames="teacher_id" constraintName="fk_schedule_teacher"
+                                 referencedTableName="teacher"
+                                 referencedColumnNames="id" deleteCascade="true"/>
+
     </changeSet>
 
 
