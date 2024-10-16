@@ -1,31 +1,25 @@
-version: '3.8'
-
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  spring-app:
+    image: spring-app
+    container_name: spring-app
     ports:
       - "8081:8081"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/scheduleproject
-      - SPRING_DATASOURCE_USERNAME=pinkyzeus
-      - SPRING_DATASOURCE_PASSWORD=bdd185-kv114
-      - SPRING_MAIL_HOST=smtp.timeweb.ru
-      - SPRING_MAIL_PORT=587
-      - SPRING_MAIL_USERNAME=ksu@24schedule.ru
-      - SPRING_MAIL_PASSWORD=95wnqo37s0
+    env_file:
+      - .env   # Теперь Docker будет подгружать переменные окружения из .env
     depends_on:
-      - db
+      - postgres-db
 
-  db:
-    image: postgres:16
+  postgres-db:
+    image: postgres:13
+    container_name: postgres-db
     environment:
       POSTGRES_DB: scheduleproject
       POSTGRES_USER: pinkyzeus
-      POSTGRES_PASSWORD: bdd185-kv114
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}  # Использование пароля из .env
+    ports:
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  db_data:
+  postgres_data:

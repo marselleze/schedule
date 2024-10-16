@@ -88,6 +88,10 @@ public class User implements UserDetails {
     @JsonManagedReference
     private Photo photo;
 
+    @ManyToOne(targetEntity = Faculty.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
+
     /**
      * Возвращает список прав, предоставленных пользователю.
      *

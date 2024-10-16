@@ -47,6 +47,10 @@ public class Group {
     @Column(name = "profile")
     private String profile;
 
+    @ManyToOne(targetEntity = Faculty.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
+
     //@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     //private List<Subgroup> subgroups;
 
