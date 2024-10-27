@@ -28,7 +28,8 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-          docker push schedule-image
+          docker tag schedule-image "${{ secrets.DOCKER_HUB_USERNAME }}/schedule-image"
+          docker push "${{ secrets.DOCKER_HUB_USERNAME }}/schedule-image"
 
       - name: Set up SSH key
         run: |
