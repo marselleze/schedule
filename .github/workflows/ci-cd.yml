@@ -36,7 +36,7 @@ jobs:
 
       - name: Deploy to remote server
         run: |
-            echo "${{ secrets.SSH_PASSWORD }}" | sshpass ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@77.232.128.111 "docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/schedule-image:latest && docker-compose up -d"
+            echo "${{ secrets.SSH_PASSWORD }}" | sshpass ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@77.232.128.111 "docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/schedule-image && docker-compose up -d"
       - name: Notify Telegram
         run: |
             curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
