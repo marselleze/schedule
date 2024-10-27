@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.ksu</groupId>
     <artifactId>schedule</artifactId>
-    <version></version>
+    <version>1.1.6</version>
     <name>schedule</name>
     <description>schedule</description>
     <properties>
