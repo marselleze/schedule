@@ -22,7 +22,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/scheduleproject
     username: pinkyzeus
     password: bdd185-kv114
-    driver-class-name: org.postgresql.Driver
 
 
 
