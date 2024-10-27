@@ -31,14 +31,12 @@ jobs:
           docker tag schedule-image "${{ secrets.DOCKER_HUB_USERNAME }}/schedule-image"
           docker push "${{ secrets.DOCKER_HUB_USERNAME }}/schedule-image"
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa    
+      - name: Install sshpass
+        run: sudo apt-get install sshpass
 
       - name: Deploy to remote server
-        run: ssh -o StrictHostKeyChecking=no root@77.232.128.111 "docker pull your-docker-image-name && docker-compose up -d"
+        run: |
+            echo "${{ secrets.SSH_PASSWORD }}" | sshpass ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@77.232.128.111 "docker pull your-docker-image-name && docker-compose up -d"
 
       - name: Notify Telegram
         run: |
