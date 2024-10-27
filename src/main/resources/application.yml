@@ -50,6 +50,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   mvc:
     hiddenmethod:
       filter:
