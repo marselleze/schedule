@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ksu.schedule.domain.Faculty;
 import org.ksu.schedule.domain.Role;
 
 /**
@@ -63,4 +64,6 @@ public class RegisterRequest {
      * Роль пользователя.
      */
     private Role role;
+
+    private Faculty faculty;
 }

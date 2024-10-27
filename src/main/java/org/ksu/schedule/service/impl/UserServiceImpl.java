@@ -93,6 +93,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> updateStudentGroup(String email, String groupName, String subgroupName) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            user.get().setGroup_number(groupName);
+            user.get().setSubgroup_number(subgroupName);
+            userRepository.save(user.get());
+        }
+        return user;
+    }
+
+    @Override
     public User findUserByFullName(String fullName) {
         String[] nameParts = fullName.split(" ");
         if (nameParts.length != 3) {

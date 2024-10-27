@@ -69,4 +69,8 @@ public interface GroupService {
      * @return список всех групп
      */
     List<Group> getAll();
+
+    List<Group> getByFacultyName(String facultyName);
+
+    List<Group> getByFacultyAbb(String facultyAbb);
 }

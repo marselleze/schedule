@@ -65,6 +65,7 @@ public class AuthenticationService {
                 .subgroup_number(request.getSubgroup_number())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .faculty(request.getFaculty())
                 .build();
 
         // Сохраняем пользователя в базу данных и получаем сохраненного пользователя с ID

@@ -76,6 +76,8 @@ public class Schedule {
     @Column(name = "classroom")
     private String classroom;
 
+
+
     /**
      * Создает объект расписания на основе текущего состояния.
      *

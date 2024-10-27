@@ -1,25 +1,28 @@
+version: '3.8'
+
 services:
-  spring-app:
-    image: spring-app
-    container_name: spring-app
+  app:
+    build: .
     ports:
       - "8081:8081"
-    env_file:
-      - .env   # Теперь Docker будет подгружать переменные окружения из .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/scheduleproject
+      SPRING_DATASOURCE_USERNAME: pinkyzeus
+      SPRING_DATASOURCE_PASSWORD: bdd185-kv114
     depends_on:
-      - postgres-db
+      - db
 
-  postgres-db:
-    image: postgres:13
-    container_name: postgres-db
+  db:
+    image: postgres:latest
     environment:
       POSTGRES_DB: scheduleproject
       POSTGRES_USER: pinkyzeus
-      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}  # Использование пароля из .env
+      POSTGRES_PASSWORD: bdd185-kv114
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-volumes:
-  postgres_data:
+  healthcheck:
+    test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+    interval: 5m
+    timeout: 10s
+    retries: 3

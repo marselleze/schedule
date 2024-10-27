@@ -112,4 +112,12 @@ public class GroupController {
     public GroupDto getGroupByNumber(@PathVariable String number) {
         return GroupDto.toDto(groupService.getByNumber(number));
     }
+
+    @GetMapping("/batches/faculty/name/{name}")
+    public List<GroupDto> getGroupByFaculty(@PathVariable String name) {
+        return groupService.getByFacultyName(name)
+                .stream()
+                .map(GroupDto::toDto)
+                .collect(Collectors.toList());
+    }
 }

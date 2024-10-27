@@ -73,6 +73,8 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                     String teacherPost = "";
                     String weekView = "";
                     String numAuditorium = "";
+                    String facultyFull = "";
+                    String facultyReduc = "";
 
                     //Счётчик листов
                     for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
@@ -98,6 +100,87 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                         int numSubGroupForNumGroup = 2;
                         //Разбиваем направление
                         int indexProf = 0;
+
+                        //Получаем факультет
+                        for (int r = 0; r < rows; r++) {
+                            if (!(facultyReduc.isEmpty() && facultyFull.isEmpty())){
+                                break;
+                            }
+                            //Получаем строку номера r
+                            XSSFRow row = sheet.getRow(r);
+                            for (int c = 0; c < cols; c++) {
+                                //Получаем ячейку номер с
+                                XSSFCell cell = row.getCell(c);
+
+                                if (!fullCell(cell)){
+                                    continue;
+                                }
+
+                                if (cell.getStringCellValue().contains("акультет") || cell.getStringCellValue().contains("олледж") || cell.getStringCellValue().contains("нститут")) {
+                                    //Присвоение полного названия факультета
+                                    facultyFull = cell.getStringCellValue();
+                                    //Перевод в сокращение
+                                    if (facultyFull.contains("ефектологический")) {
+                                        facultyReduc = "ДЕФ";
+                                        break;
+                                    } else if (facultyFull.contains("стественно-географич")) {
+                                        facultyReduc = "ЕГФ";
+                                        break;
+                                    } else if (facultyFull.contains("ндустриально-педагогич")) {
+                                        facultyReduc = "ИПФ";
+                                        break;
+                                    } else if (facultyFull.contains("сторич")) {
+                                        facultyReduc = "ИСТ";
+                                        break;
+                                    } else if (facultyFull.contains("коммерции, технологий и сервиса")) {
+                                        facultyReduc = "ККТС";
+                                        break;
+                                    } else if (facultyFull.contains("иностранных язык")) {
+                                        facultyReduc = "ФИЯ";
+                                        break;
+                                    } else if (facultyFull.contains("искусств и арт-педагогики")) {
+                                        facultyReduc = "ФИАП";
+                                        break;
+                                    } else if (facultyFull.contains("педагогики и психологии")) {
+                                        facultyReduc = "ПИП";
+                                        break;
+                                    } else if (facultyFull.contains("теологии и религиоведения")) {
+                                        facultyReduc = "ФТиР";
+                                        break;
+                                    } else if (facultyFull.contains("физики, математики, информатики")) {
+                                        facultyReduc = "ФМИ";
+                                        break;
+                                    } else if (facultyFull.contains("ФМИ")) {
+                                        facultyReduc = "ФМИ";
+                                        facultyFull = "Факультет физики, математики, информатики";
+                                        break;
+                                    } else if (facultyFull.contains("физической культуры и спорта")) {
+                                        facultyReduc = "ФФСК";
+                                        break;
+                                    } else if (facultyFull.contains("философии и социологии")) {
+                                        facultyReduc = "ФФС";
+                                        break;
+                                    } else if (facultyFull.contains("экономики и управления")) {
+                                        facultyReduc = "ИЭУ";
+                                        break;
+                                    } else if (facultyFull.contains("илологичес")) {
+                                        facultyReduc = "ФИЛ";
+                                        break;
+                                    } else if (facultyFull.contains("удожественно-графичес")) {
+                                        facultyReduc = "ХГФ";
+                                        break;
+                                    } else if (facultyFull.contains("ридичес")) {
+                                        facultyReduc = "ЮРФ";
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        //Выводим название факультета и сокращение
+                        System.out.println(facultyFull);
+                        System.out.println(facultyReduc);
+
                         //Разбиваем строку на список
                         List<String> fullName = new ArrayList<>(List.of(sheet.getRow(skipTopRows(sheet))
                                 .getCell(2).getStringCellValue().replace("\n", " ")
@@ -109,7 +192,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                         //i - индекс подстроки в списке
                         for (int i = 0; i < fullName.size(); i++) {
                             //Запоминаем индекс вида пары и должности препода
-                            if (fullName.get(i).contains("(")) {
+                            if (fullName.get(i).contains("(профиль")) {
                                 indexProf = i - 1;
                                 break;
                             }
@@ -437,7 +520,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                     Schedule scheduleTransaction =
                                             Schedule.builder()
                                                     .parity(weekView)
-                                                    .subgroup(subgroupRepository.findByNumber(subGroup))
+                                                    .subgroup(subgroupRepository.findFirstByNumber(subGroup))
                                                     .subject(subjectRepository.findByNameAndType(nameDiscipline, disciplineView))
                                                     .teacher(teacherRepository.findByNameAndPost(teacherFCs, teacherPost))
                                                     .dayWeek(day)
@@ -524,7 +607,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
             if (!fullCell(cell))
                 continue;
             //Если доходим до строки с "СОГЛАСОВАНО" возвращаем номер этой строки
-            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("Согл"))) {
+            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("огл") || cell.getStringCellValue().contains("ОГЛ"))) {
                 return r;
             }
         }

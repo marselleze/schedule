@@ -48,5 +48,8 @@ public interface SubgroupRepository extends JpaRepository<Subgroup, Integer> {
      */
     List<Subgroup> findByGroupNumber(String groupNumber);
 
+
+    Subgroup findFirstByNumber(String number);
+
     void deleteByNumber(String numSubGroup);
 }

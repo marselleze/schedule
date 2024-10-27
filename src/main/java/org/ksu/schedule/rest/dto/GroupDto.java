@@ -1,6 +1,7 @@
 package org.ksu.schedule.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
  * DTO класс для представления группы.
  *
  * @version 1.0
- * @autor Егор Гришанов
+ * @author Егор Гришанов
  */
 @Data
 @NoArgsConstructor
@@ -28,7 +29,8 @@ public class GroupDto {
     private String number;
     private String direction;
     private String profile;
-    private Faculty faculty;
+
+    private FacultyDto faculty;
 
 
     /**
@@ -43,13 +45,13 @@ public class GroupDto {
         }
 
 
-        return GroupDto.builder()
-                .id(group.getId())
-                .number(group.getNumber())
-                .direction(group.getDirection())
-                .profile(group.getProfile())
-                .faculty(group.getFaculty())
-                .build();
+        return new GroupDto(
+                group.getId(),
+                group.getNumber(),
+                group.getDirection(),
+                group.getProfile(),
+                FacultyDto.toDto(group.getFaculty())
+        );
     }
 
     /**
@@ -68,7 +70,7 @@ public class GroupDto {
                 groupDto.getNumber(),
                 groupDto.getDirection(),
                 groupDto.getProfile(),
-                groupDto.getFaculty()
+                FacultyDto.toEntity(groupDto.getFaculty())
         );
     }
 }

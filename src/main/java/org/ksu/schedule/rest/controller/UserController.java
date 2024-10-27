@@ -50,6 +50,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.updateStudent(email, lastName, firstName, middleName));
     }
 
+
+
     /**
      * Обновить информацию преподавателя.
      *
@@ -78,6 +80,13 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PutMapping ("/user/update/student/groups/{email}")
+    public ResponseEntity<Optional<User>> updateStudentGroups(@PathVariable String email,
+                                                        @RequestParam String groupNumber,
+                                                        @RequestParam String subgroupNumber) {
+        return ResponseEntity.ok().body(userService.updateStudentGroup(email, groupNumber, subgroupNumber));
     }
 
 

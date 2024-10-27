@@ -38,6 +38,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
     private final ScheduleRepository scheduleRepository;
+    private final FacultyRepository facultyRepository;
 
     private final ScheduleServiceImpl scheduleServiceImpl;
 
@@ -101,7 +102,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             if (!fullCell(cell))
                 continue;
             //Если доходим до строки с "СОГЛАСОВАНО" возвращаем номер этой строки
-            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("Согл"))) {
+            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("огл") || cell.getStringCellValue().contains("ОГЛ"))) {
                 return r;
             }
         }
@@ -202,6 +203,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             List<Teacher> teacherTransactions = new ArrayList<>();
             List<Subject> subjectTransactions = new ArrayList<>();
             List<Schedule> scheduleTransactions = new ArrayList<>();
+            List<Faculty> facultyTransactions = new ArrayList<>();
 
             files.forEach(multipartfile -> {
                 try {
@@ -225,6 +227,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     String weekView = "";
                     String numAuditorium = "";
                     boolean GroupExists = false;
+                    String facultyFull = "";
+                    String facultyReduc = "";
 
                     //Счётчик листов
                     for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
@@ -248,6 +252,102 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         int numSubGroup = 1;
                         //переменная numSubGroup для определения номера группы
                         int numSubGroupForNumGroup = 2;
+
+                        //Получаем факультет
+                        for (int r = 0; r < rows; r++) {
+                            if (!(facultyReduc.isEmpty() && facultyFull.isEmpty())){
+                                break;
+                            }
+                            //Получаем строку номера r
+                            XSSFRow row = sheet.getRow(r);
+                            for (int c = 0; c < cols; c++) {
+                                //Получаем ячейку номер с
+                                XSSFCell cell = row.getCell(c);
+
+                                if (!fullCell(cell)){
+                                    continue;
+                                }
+
+                                if (cell.getStringCellValue().contains("акультет") || cell.getStringCellValue().contains("олледж") || cell.getStringCellValue().contains("нститут")) {
+                                    //Присвоение полного названия факультета
+                                    facultyFull = cell.getStringCellValue();
+                                    //Перевод в сокращение
+                                    if (facultyFull.contains("ефектологический")) {
+                                        facultyReduc = "ДЕФ";
+                                        break;
+                                    } else if (facultyFull.contains("стественно-географич")) {
+                                        facultyReduc = "ЕГФ";
+                                        break;
+                                    } else if (facultyFull.contains("ндустриально-педагогич")) {
+                                        facultyReduc = "ИПФ";
+                                        break;
+                                    } else if (facultyFull.contains("сторич")) {
+                                        facultyReduc = "ИСТ";
+                                        break;
+                                    } else if (facultyFull.contains("коммерции, технологий и сервиса")) {
+                                        facultyReduc = "ККТС";
+                                        break;
+                                    } else if (facultyFull.contains("иностранных язык")) {
+                                        facultyReduc = "ФИЯ";
+                                        break;
+                                    } else if (facultyFull.contains("искусств и арт-педагогики")) {
+                                        facultyReduc = "ФИАП";
+                                        break;
+                                    } else if (facultyFull.contains("педагогики и психологии")) {
+                                        facultyReduc = "ПИП";
+                                        break;
+                                    } else if (facultyFull.contains("теологии и религиоведения")) {
+                                        facultyReduc = "ФТиР";
+                                        break;
+                                    } else if (facultyFull.contains("физики, математики, информатики")) {
+                                        facultyReduc = "ФМИ";
+                                        break;
+                                    } else if (facultyFull.contains("ФМИ")) {
+                                        facultyReduc = "ФМИ";
+                                        facultyFull = "Факультет физики, математики, информатики";
+                                        break;
+                                    } else if (facultyFull.contains("физической культуры и спорта")) {
+                                        facultyReduc = "ФФСК";
+                                        break;
+                                    } else if (facultyFull.contains("философии и социологии")) {
+                                        facultyReduc = "ФФС";
+                                        break;
+                                    } else if (facultyFull.contains("экономики и управления")) {
+                                        facultyReduc = "ИЭУ";
+                                        break;
+                                    } else if (facultyFull.contains("илологичес")) {
+                                        facultyReduc = "ФИЛ";
+                                        break;
+                                    } else if (facultyFull.contains("удожественно-графичес")) {
+                                        facultyReduc = "ХГФ";
+                                        break;
+                                    } else if (facultyFull.contains("ридичес")) {
+                                        facultyReduc = "ЮРФ";
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        //Выводим название факультета и сокращение
+                        System.out.println(facultyFull);
+                        System.out.println(facultyReduc);
+
+                        Faculty faculty =
+                                Faculty.builder()
+                                        .facultyName(facultyFull)
+                                        .abbreviation(facultyReduc)
+                                        .build();
+
+                        boolean facultyExist = facultyRepository.existsByFacultyName(facultyFull);
+
+
+                        if (!facultyExist) {
+                            facultyTransactions.add(faculty);
+                        }
+
+                        facultyRepository.saveAll(facultyTransactions);
+
                         //Разбиваем направление
                         int indexProf = 0;
                         //Разбиваем строку на список
@@ -261,7 +361,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         //i - индекс подстроки в списке
                         for (int i = 0; i < fullName.size(); i++) {
                             //Запоминаем индекс вида пары и должности препода
-                            if (fullName.get(i).contains("(")) {
+                            if (fullName.get(i).contains("(профиль")) {
                                 indexProf = i - 1;
                                 break;
                             }
@@ -333,14 +433,19 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     numGroup = fullGroup[0];
                                     //Номер группы
                                     System.out.println(numGroup);
+                                    logger.info(facultyRepository.findAll().toString());
+                                    logger.info("Ищем факультет: " + facultyFull);
 
                                     Group transaction =
                                             Group.builder()
                                                     .number(numGroup)
                                                     .direction(nameDirection)
                                                     .profile(nameProfile)
+                                                    .faculty(facultyRepository.findByFacultyName(facultyFull))
                                                     .build();
                                     groupTransactions.add(transaction);
+
+
 
                                     for (Group group : groupTransactions) {
                                         if (group.getNumber().equals(transaction.getNumber())) {
@@ -494,7 +599,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                                     //Здесь было прошлое удаление
                                     logger.info("Удаление расписания по номеру подгруппы: " + subGroup);
-                                    Subgroup subgroupForDelete = subgroupRepository.findByNumber(subGroup);
+                                    Subgroup subgroupForDelete = subgroupRepository.findFirstByNumber(subGroup);
 
                                     if (subgroupForDelete != null) {
                                         Group group = subgroupForDelete.getGroup(); // Получаем группу, к которой относится подгруппа
@@ -516,12 +621,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                             subgroupRepository.delete(subgroupForDelete);
                                             logger.info("Подгруппа удалена");
                                         } else {
+                                            List<Schedule> schedules = scheduleRepository.findBySubgroupId(subgroupForDelete.getId());
+                                            logger.info("Найдено расписаний для удаления: " + schedules.size());
+
+                                            for (Schedule schedule : schedules) {
+                                                scheduleRepository.delete(schedule);
+                                            }
                                             logger.info("Номер подгруппы совпадает с номером группы. Удаление отменено.");
                                         }
                                     }
-
-
-
 
 
                                     Subgroup subgroupTransaction = Subgroup.builder()
@@ -539,7 +647,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                                     if (!SubgroupExists) {
                                         subgroupTransactions.add(subgroupTransaction);
-                                        subgroupRepository.saveAllAndFlush(subgroupTransactions);
+                                        subgroupRepository.saveAll(subgroupTransactions);
                                     } else {
                                         continue;
                                     }
@@ -660,19 +768,37 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                                 subjectRepository.saveAll(subjectTransactions);
 
+                                // Создаем нового преподавателя
                                 Teacher teachersTransaction = Teacher.builder()
                                         .name(teacherFCs)
                                         .post(teacherPost)
                                         .build();
+
                                 System.out.println(teachersTransaction);
-                                boolean teacherExists = teacherRepository.existsByName(teachersTransaction.getName());
+
+                                // Проверяем, существует ли преподаватель с таким именем
+                                Optional<Teacher> existingTeacherOpt = Optional.ofNullable(teacherRepository.findByName(teachersTransaction.getName()));
+                                boolean teacherExists = existingTeacherOpt.isPresent();
                                 System.out.println(teacherExists);
 
+                                if (teacherExists) {
+                                    Teacher existingTeacher = existingTeacherOpt.get();
 
-                                if (!teacherExists) {
+                                    // Проверяем, отличается ли роль
+                                    if (!existingTeacher.getPost().equals(teachersTransaction.getPost())) {
+                                        // Если роль отличается, обновляем существующую запись
+                                        existingTeacher.setPost(teachersTransaction.getPost());
+                                        teacherRepository.save(existingTeacher); // Сохраняем изменения
+                                        System.out.println("Обновлена роль преподавателя: " + existingTeacher);
+                                    } else {
+                                        System.out.println("Преподаватель с такой ролью уже существует.");
+                                    }
+                                } else {
+                                    // Если преподаватель не существует, добавляем его в список транзакций
                                     teacherTransactions.add(teachersTransaction);
                                 }
 
+                                // Сохраняем уникальных преподавателей
                                 List<Teacher> uniqueTeachers = teacherTransactions.stream()
                                         .distinct()
                                         .collect(Collectors.toList());
@@ -716,5 +842,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 }
             });
         }
+    }
+
+    // Метод для удаления расписаний
+    private void deleteSchedules(Subgroup subgroup) {
+        List<Schedule> schedules = scheduleRepository.findBySubgroupId(subgroup.getId());
+        logger.info("Найдено расписаний для удаления: " + schedules.size());
+        for (Schedule schedule : schedules) {
+            scheduleRepository.delete(schedule);
+        }
+        logger.info("Расписания удалены");
     }
 }

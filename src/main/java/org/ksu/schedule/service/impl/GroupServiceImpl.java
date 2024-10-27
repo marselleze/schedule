@@ -104,4 +104,14 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> getAll() {
         return groupRepository.findAll();
     }
+
+    @Override
+    public List<Group> getByFacultyName(String facultyName) {
+        return groupRepository.findByFaculty_FacultyName(facultyName);
+    }
+
+    @Override
+    public List<Group> getByFacultyAbb(String facultyAbb) {
+        return groupRepository.findByFaculty_Abbreviation(facultyAbb);
+    }
 }
