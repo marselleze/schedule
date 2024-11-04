@@ -2,6 +2,7 @@ package org.ksu.schedule.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.Group;
+import org.ksu.schedule.repository.FacultyRepository;
 import org.ksu.schedule.repository.GroupRepository;
 import org.ksu.schedule.service.GroupService;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
+    private final FacultyRepository facultyRepository;
 
     /**
      * Добавляет новую группу.
@@ -84,12 +86,13 @@ public class GroupServiceImpl implements GroupService {
      * @return обновленная группа
      */
     @Override
-    public Group updateGroup(int id, String number, String direction, String profile) {
+    public Group updateGroup(int id, String number, String direction, String profile, Integer facultyId) {
         Group group = Group.builder()
                 .id(id)
                 .number(number)
                 .direction(direction)
                 .profile(profile)
+                .faculty(facultyRepository.findById(facultyId).isPresent() ? facultyRepository.findById(facultyId).get() : null)
                 .build();
 
         return groupRepository.saveAndFlush(group);

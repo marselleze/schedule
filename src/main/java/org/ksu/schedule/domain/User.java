@@ -1,6 +1,7 @@
 package org.ksu.schedule.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +53,7 @@ public class User implements UserDetails {
     /**
      * Email пользователя.
      */
+    @Column(unique = true)
     private String email;
 
     /**
@@ -88,8 +90,9 @@ public class User implements UserDetails {
     @JsonManagedReference
     private Photo photo;
 
-    @ManyToOne(targetEntity = Faculty.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "faculty_id")
+    @ManyToOne(targetEntity = Faculty.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "faculty_id", nullable = true)
+    @JsonManagedReference
     private Faculty faculty;
 
     /**

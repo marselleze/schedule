@@ -85,8 +85,8 @@ public class UserController {
     @PutMapping ("/user/update/student/groups/{email}")
     public ResponseEntity<Optional<User>> updateStudentGroups(@PathVariable String email,
                                                         @RequestParam String groupNumber,
-                                                        @RequestParam String subgroupNumber) {
-        return ResponseEntity.ok().body(userService.updateStudentGroup(email, groupNumber, subgroupNumber));
+                                                        @RequestParam String subgroupNumber, @RequestParam String facultyName) {
+        return ResponseEntity.ok().body(userService.updateStudentGroupAndFaculty(email, groupNumber, subgroupNumber, facultyName));
     }
 
 

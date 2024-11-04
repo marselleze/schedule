@@ -2,6 +2,7 @@ package org.ksu.schedule.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.User;
+import org.ksu.schedule.repository.FacultyRepository;
 import org.ksu.schedule.repository.UserRepository;
 import org.ksu.schedule.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final FacultyRepository facultyRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -93,11 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> updateStudentGroup(String email, String groupName, String subgroupName) {
+    public Optional<User> updateStudentGroupAndFaculty(String email, String groupName, String subgroupName, String facultyName) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
             user.get().setGroup_number(groupName);
             user.get().setSubgroup_number(subgroupName);
+            user.get().setFaculty(facultyRepository.findByFacultyName(facultyName));
             userRepository.save(user.get());
         }
         return user;
@@ -108,6 +111,14 @@ public class UserServiceImpl implements UserService {
         String[] nameParts = fullName.split(" ");
         if (nameParts.length != 3) {
             throw new IllegalArgumentException("Полное имя должно быть в формате: Фамилия И.О.");
+        }
+
+        if (nameParts[1].length() != 2) {
+            throw new IllegalArgumentException("Имя должно быть в формате: И.О.");
+        }
+
+        if (nameParts[2].length() != 2) {
+            throw new IllegalArgumentException("Отчество должно быть в формате: И.О.");
         }
 
         String lastName = nameParts[0];

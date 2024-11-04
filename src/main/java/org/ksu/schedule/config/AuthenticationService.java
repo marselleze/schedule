@@ -1,8 +1,10 @@
 package org.ksu.schedule.config;
 
 import lombok.RequiredArgsConstructor;
+import org.ksu.schedule.domain.Faculty;
 import org.ksu.schedule.domain.Teacher;
 import org.ksu.schedule.domain.User;
+import org.ksu.schedule.repository.FacultyRepository;
 import org.ksu.schedule.repository.TeacherRepository;
 import org.ksu.schedule.repository.UserRepository;
 import org.ksu.schedule.rest.controller.AuthenticationRequest;
@@ -34,6 +36,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtAuthenticationService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final FacultyRepository facultyRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
@@ -55,6 +58,13 @@ public class AuthenticationService {
         String firstNameInitial = request.getFirstName().charAt(0) + ".";
         String middleNameInitial = request.getMiddleName().charAt(0) + ".";
 
+        Faculty faculty = request.getFaculty();
+        if (faculty != null) {
+            faculty = facultyRepository.findById(request.getFaculty().getId()).orElseThrow(() -> new IllegalArgumentException("Invalid faculty ID"));
+        }
+
+
+
         // Создание пользователя
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -65,16 +75,14 @@ public class AuthenticationService {
                 .subgroup_number(request.getSubgroup_number())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
-                .faculty(request.getFaculty())
+                .faculty(faculty)
                 .build();
 
         // Сохраняем пользователя в базу данных и получаем сохраненного пользователя с ID
         User savedUser = userRepository.save(user);
 
-        userRepository.save(savedUser);
-
         // Генерация JWT токена
-        String jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(savedUser);
 
         // Логирование сгенерированного токена
         logger.info("Generated token: {}", jwtToken);

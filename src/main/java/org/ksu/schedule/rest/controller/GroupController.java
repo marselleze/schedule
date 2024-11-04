@@ -59,8 +59,9 @@ public class GroupController {
     public GroupDto updateGroup(@PathVariable int id,
                                 @RequestParam String number,
                                 @RequestParam String direction,
-                                @RequestParam String profile) {
-        Group group = groupService.updateGroup(id, number, direction, profile);
+                                @RequestParam String profile,
+                                @RequestParam Integer facultyId) {
+        Group group = groupService.updateGroup(id, number, direction, profile, facultyId);
         return GroupDto.toDto(group);
     }
 
