@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -273,33 +271,43 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     facultyFull = cell.getStringCellValue();
                                     //Перевод в сокращение
                                     if (facultyFull.contains("ефектологический")) {
+                                        facultyFull = "Дефектологический факультет";
                                         facultyReduc = "ДЕФ";
                                         break;
                                     } else if (facultyFull.contains("стественно-географич")) {
+                                        facultyFull = "Естественно-географический факультет";
                                         facultyReduc = "ЕГФ";
                                         break;
                                     } else if (facultyFull.contains("ндустриально-педагогич")) {
+                                        facultyFull = "Индустриально-педагогический факультет";
                                         facultyReduc = "ИПФ";
                                         break;
                                     } else if (facultyFull.contains("сторич")) {
+                                        facultyFull = "Исторический факультет";
                                         facultyReduc = "ИСТ";
                                         break;
                                     } else if (facultyFull.contains("коммерции, технологий и сервиса")) {
+                                        facultyFull = "Колледж коммерции, технологий и сервиса";
                                         facultyReduc = "ККТС";
                                         break;
                                     } else if (facultyFull.contains("иностранных язык")) {
+                                        facultyFull = "Факультет иностранных языков";
                                         facultyReduc = "ФИЯ";
                                         break;
                                     } else if (facultyFull.contains("искусств и арт-педагогики")) {
+                                        facultyFull = "Факультет искусств и арт-педагогики";
                                         facultyReduc = "ФИАП";
                                         break;
                                     } else if (facultyFull.contains("педагогики и психологии")) {
+                                        facultyFull = "Факультет педагогики и психологии";
                                         facultyReduc = "ПИП";
                                         break;
                                     } else if (facultyFull.contains("теологии и религиоведения")) {
+                                        facultyFull = "Факультет теологии и религиоведения";
                                         facultyReduc = "ФТиР";
                                         break;
                                     } else if (facultyFull.contains("физики, математики, информатики")) {
+                                        facultyFull = "Факультет физики, математики, информатики";
                                         facultyReduc = "ФМИ";
                                         break;
                                     } else if (facultyFull.contains("ФМИ")) {
@@ -307,21 +315,27 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                         facultyFull = "Факультет физики, математики, информатики";
                                         break;
                                     } else if (facultyFull.contains("физической культуры и спорта")) {
+                                        facultyFull = "Факультет физической культуры и спорта";
                                         facultyReduc = "ФФСК";
                                         break;
                                     } else if (facultyFull.contains("философии и социологии")) {
+                                        facultyFull = "Факультет философии и социологии";
                                         facultyReduc = "ФФС";
                                         break;
                                     } else if (facultyFull.contains("экономики и управления")) {
+                                        facultyFull = "Институт экономики и управления";
                                         facultyReduc = "ИЭУ";
                                         break;
                                     } else if (facultyFull.contains("илологичес")) {
+                                        facultyFull = "Филологический факультет";
                                         facultyReduc = "ФИЛ";
                                         break;
                                     } else if (facultyFull.contains("удожественно-графичес")) {
+                                        facultyFull = "Художественно-графический факультет";
                                         facultyReduc = "ХГФ";
                                         break;
                                     } else if (facultyFull.contains("ридичес")) {
+                                        facultyFull = "Юридический факультет";
                                         facultyReduc = "ЮРФ";
                                         break;
                                     }
@@ -420,6 +434,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                             if (row == null)
                                 continue;
 
+                            //Костыль для пропуска строки с подписью декана
+                            if (row.getCell(0).getStringCellValue().contains("екан")){
+                                continue;
+                            }
+
                             /////Получаем номер группы////
                             if (r == skipTopRows(sheet) + numRowsAdd && numSubGroupForNumGroup <= countSubGroups(sheet) * 2) {
                                 String[] fullGroup = sheet.getRow(skipTopRows(sheet) + numRowsAdd)
@@ -436,23 +455,44 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     logger.info(facultyRepository.findAll().toString());
                                     logger.info("Ищем факультет: " + facultyFull);
 
-                                    Group transaction =
-                                            Group.builder()
-                                                    .number(numGroup)
-                                                    .direction(nameDirection)
-                                                    .profile(nameProfile)
-                                                    .faculty(facultyRepository.findByFacultyName(facultyFull))
-                                                    .build();
-                                    groupTransactions.add(transaction);
+                                    Group transaction = Group.builder()
+                                            .number(numGroup)
+                                            .direction(nameDirection)
+                                            .profile(nameProfile)
+                                            .faculty(facultyRepository.findByFacultyName(facultyFull))
+                                            .build();
 
 
 
-                                    for (Group group : groupTransactions) {
-                                        if (group.getNumber().equals(transaction.getNumber())) {
-                                            GroupExists = true;
-                                            break;
-                                        }
+
+                                    // Проверяем, существует ли группа с таким же номером и тем же факультетом
+                                    boolean exists = groupTransactions.stream().anyMatch(group ->
+                                            group.getNumber().equals(transaction.getNumber())
+                                    );
+
+
+                                    if (!exists) {
+                                        groupTransactions.add(transaction);
                                     }
+
+                                    System.out.println(groupTransactions);
+
+                                    System.out.println("Проверяем группу: " + transaction);
+                                    groupTransactions.forEach(group -> {
+                                        System.out.println("Сравниваем с группой: " + group);
+                                    });
+
+
+
+//                                    for (Group group : groupTransactions) {
+//                                        if (group.getNumber().equals(transaction.getNumber()) && !group.getFaculty().equals(transaction.getFaculty())) {
+//                                            GroupExists = false;
+//                                        }
+//                                        else {
+//                                            GroupExists = true;
+//                                            break;
+//                                        }
+//                                    }
                                 }
 
                             }
@@ -591,7 +631,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                                     //Получем номер подгруппы
                                     subGroup = fullNumGroup[1];
 
-                                    Optional<Group> groupInDb = Optional.ofNullable(groupRepository.findByNumber(numGroup));
+                                    Integer facultyId = facultyRepository.findByFacultyName(facultyFull).getId();
+
+                                    Optional<Group> groupInDb = Optional.ofNullable(groupRepository.findByNumberAndFacultyId(numGroup, facultyId));
+
 
                                     if (!groupTransactions.isEmpty() && !groupInDb.isPresent()) {
                                         groupRepository.saveAll(groupTransactions);
@@ -634,7 +677,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
                                     Subgroup subgroupTransaction = Subgroup.builder()
                                             .number(subGroup)
-                                            .group(groupRepository.findByNumber(numGroup))
+                                            .group(groupRepository.findByNumberAndFacultyId(numGroup, facultyId))
                                             .build();
 
                                     boolean SubgroupExists = false;

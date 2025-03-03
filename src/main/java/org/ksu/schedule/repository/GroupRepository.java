@@ -55,4 +55,6 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
     List<Group> findByFaculty_FacultyName(String facultyName);
 
     List<Group> findByFaculty_Abbreviation(String abbreviation);
+
+    Group findByNumberAndFacultyId(String number, Integer facultyId);
 }

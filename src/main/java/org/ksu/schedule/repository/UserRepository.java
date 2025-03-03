@@ -25,8 +25,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.lastName = :lastName AND u.firstName LIKE :initials AND u.middleName LIKE :middleInitial")
-    Optional<User> findByFullName(@Param("lastName") String lastName,
-                                  @Param("initials") String initials,
-                                  @Param("middleInitial") String middleInitial);
+    @Query("SELECT u FROM User u WHERE u.lastName = :lastName " +
+            "AND u.firstName LIKE CONCAT(:firstInitial, '%') " +
+            "AND u.middleName LIKE CONCAT(:middleInitial, '%')")
+    Optional<User> findByLastNameAndInitials(@Param("lastName") String lastName,
+                                             @Param("firstInitial") String firstInitial,
+                                             @Param("middleInitial") String middleInitial);
+
 }

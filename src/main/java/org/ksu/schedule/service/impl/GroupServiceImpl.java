@@ -92,7 +92,7 @@ public class GroupServiceImpl implements GroupService {
                 .number(number)
                 .direction(direction)
                 .profile(profile)
-                .faculty(facultyRepository.findById(facultyId).isPresent() ? facultyRepository.findById(facultyId).get() : null)
+                .faculty(facultyRepository.findById(facultyId).orElse(null))
                 .build();
 
         return groupRepository.saveAndFlush(group);

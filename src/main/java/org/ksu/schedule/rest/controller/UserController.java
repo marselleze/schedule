@@ -71,7 +71,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.updateTeacher(email, lastName, firstName, middleName, info));
     }
 
-    @GetMapping("/api/v1/user/teacher/fullName")
+    @GetMapping("/user/teacher/fullName")
     public ResponseEntity<User> getTeacherByFullName(
             @RequestParam("fullName") String fullName) {
         User user = userService.findUserByFullName(fullName);

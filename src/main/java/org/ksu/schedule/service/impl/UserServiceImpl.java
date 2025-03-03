@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final FacultyRepository facultyRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -108,25 +110,54 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByFullName(String fullName) {
-        String[] nameParts = fullName.split(" ");
-        if (nameParts.length != 3) {
-            throw new IllegalArgumentException("Полное имя должно быть в формате: Фамилия И.О.");
-        }
 
-        if (nameParts[1].length() != 2) {
-            throw new IllegalArgumentException("Имя должно быть в формате: И.О.");
-        }
 
-        if (nameParts[2].length() != 2) {
-            throw new IllegalArgumentException("Отчество должно быть в формате: И.О.");
+        // Убираем лишние пробелы и нормализуем ввод
+        fullName = fullName.trim();
+
+
+        // Разделяем ФИО на части
+        String[] nameParts = fullName.split("\\s+");
+
+
+        // Проверяем, что формат соответствует "Фамилия И.О." или "Фамилия И.О."
+        if (nameParts.length < 2 || nameParts.length > 3) {
+            throw new IllegalArgumentException("Полное имя должно содержать две или три части: Фамилия И.О. или Фамилия И.О.");
         }
 
         String lastName = nameParts[0];
-        String initials = nameParts[1] + "%";  // Инициал имени
-        String middleInitial = nameParts[2] + "%";  // Инициал отчества
+        String firstInitial = "";
+        String middleInitial = "";
 
-        return userRepository.findByFullName(lastName, initials, middleInitial).orElseThrow();
+        if (nameParts.length == 2) {
+            // Если имя и отчество объединены
+            if (nameParts[1].length() != 4 || !nameParts[1].endsWith(".")) {
+                throw new IllegalArgumentException("Имя и отчество должны быть в формате инициалов: И.О.");
+            }
+            firstInitial = nameParts[1].substring(0, 1).toUpperCase();
+            middleInitial = nameParts[1].substring(2, 3).toUpperCase();
+        } else {
+            // Если имя и отчество разделены
+            if (nameParts[1].length() != 2 || nameParts[2].length() != 2) {
+                throw new IllegalArgumentException("Имя и отчество должны быть в формате инициалов: И.О.");
+            }
+            if (!nameParts[1].endsWith(".") || !nameParts[2].endsWith(".")) {
+                throw new IllegalArgumentException("Инициал имени и отчества должны заканчиваться точкой.");
+            }
+            firstInitial = nameParts[1].substring(0, 1).toUpperCase();
+            middleInitial = nameParts[2].substring(0, 1).toUpperCase();
+        }
+
+        // Выполняем поиск в базе данных
+        String finalFullName = fullName;
+        return userRepository.findByLastNameAndInitials(lastName, firstInitial, middleInitial)
+                .orElseThrow(() -> {
+                    return new IllegalArgumentException("Пользователь с ФИО " + finalFullName + " не найден.");
+                });
     }
+
+
+
 
 
 

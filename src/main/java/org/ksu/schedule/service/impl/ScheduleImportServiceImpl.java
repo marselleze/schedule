@@ -121,33 +121,43 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                     facultyFull = cell.getStringCellValue();
                                     //Перевод в сокращение
                                     if (facultyFull.contains("ефектологический")) {
+                                        facultyFull = "Дефектологический факультет";
                                         facultyReduc = "ДЕФ";
                                         break;
                                     } else if (facultyFull.contains("стественно-географич")) {
+                                        facultyFull = "Естественно-географический факультет";
                                         facultyReduc = "ЕГФ";
                                         break;
                                     } else if (facultyFull.contains("ндустриально-педагогич")) {
+                                        facultyFull = "Индустриально-педагогический факультет";
                                         facultyReduc = "ИПФ";
                                         break;
                                     } else if (facultyFull.contains("сторич")) {
+                                        facultyFull = "Исторический факультет";
                                         facultyReduc = "ИСТ";
                                         break;
                                     } else if (facultyFull.contains("коммерции, технологий и сервиса")) {
+                                        facultyFull = "Колледж коммерции, технологий и сервиса";
                                         facultyReduc = "ККТС";
                                         break;
                                     } else if (facultyFull.contains("иностранных язык")) {
+                                        facultyFull = "Факультет иностранных языков";
                                         facultyReduc = "ФИЯ";
                                         break;
                                     } else if (facultyFull.contains("искусств и арт-педагогики")) {
+                                        facultyFull = "Факультет искусств и арт-педагогики";
                                         facultyReduc = "ФИАП";
                                         break;
                                     } else if (facultyFull.contains("педагогики и психологии")) {
+                                        facultyFull = "Факультет педагогики и психологии";
                                         facultyReduc = "ПИП";
                                         break;
                                     } else if (facultyFull.contains("теологии и религиоведения")) {
+                                        facultyFull = "Факультет теологии и религиоведения";
                                         facultyReduc = "ФТиР";
                                         break;
                                     } else if (facultyFull.contains("физики, математики, информатики")) {
+                                        facultyFull = "Факультет физики, математики, информатики";
                                         facultyReduc = "ФМИ";
                                         break;
                                     } else if (facultyFull.contains("ФМИ")) {
@@ -155,21 +165,27 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                         facultyFull = "Факультет физики, математики, информатики";
                                         break;
                                     } else if (facultyFull.contains("физической культуры и спорта")) {
+                                        facultyFull = "Факультет физической культуры и спорта";
                                         facultyReduc = "ФФСК";
                                         break;
                                     } else if (facultyFull.contains("философии и социологии")) {
+                                        facultyFull = "Факультет философии и социологии";
                                         facultyReduc = "ФФС";
                                         break;
                                     } else if (facultyFull.contains("экономики и управления")) {
+                                        facultyFull = "Институт экономики и управления";
                                         facultyReduc = "ИЭУ";
                                         break;
                                     } else if (facultyFull.contains("илологичес")) {
+                                        facultyFull = "Филологический факультет";
                                         facultyReduc = "ФИЛ";
                                         break;
                                     } else if (facultyFull.contains("удожественно-графичес")) {
+                                        facultyFull = "Художественно-графический факультет";
                                         facultyReduc = "ХГФ";
                                         break;
                                     } else if (facultyFull.contains("ридичес")) {
+                                        facultyFull = "Юридический факультет";
                                         facultyReduc = "ЮРФ";
                                         break;
                                     }
@@ -247,6 +263,11 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                             //Если строка пустая, пропускаем
                             if (row == null)
                                 continue;
+
+                            //Костыль для пропуска строки с подписью декана
+                            if (row.getCell(0).getStringCellValue().contains("екан")){
+                                continue;
+                            }
 
                             /////Получаем номер группы////
                             if (r == skipTopRows(sheet) + numRowsAdd && numSubGroupForNumGroup <= countSubGroups(sheet) * 2) {

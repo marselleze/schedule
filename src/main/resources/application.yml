@@ -26,7 +26,6 @@ spring:
 
 
 
-
 #TestConfig
   datasource:
     url: jdbc:postgresql://localhost:5432/schedule

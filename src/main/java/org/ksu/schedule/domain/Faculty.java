@@ -3,6 +3,8 @@ package org.ksu.schedule.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Builder
 @NoArgsConstructor
@@ -22,4 +24,17 @@ public class Faculty {
     @Column(name = "abbreviation", nullable = false)
     private String abbreviation;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Faculty faculty = (Faculty) o;
+        return Objects.equals(facultyName, faculty.facultyName);
+        // Сравнение по имени факультета
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(facultyName);
+    }
 }
