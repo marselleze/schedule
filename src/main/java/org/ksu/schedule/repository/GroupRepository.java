@@ -44,10 +44,17 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
      */
     Group findByNumber(String number);
 
+
     /**
      * Удаляет группу по номеру.
      *
      * @param number номер группы
      */
     void deleteByNumber(String number);
+
+    List<Group> findByFaculty_FacultyName(String facultyName);
+
+    List<Group> findByFaculty_Abbreviation(String abbreviation);
+
+    Group findByNumberAndFacultyId(String number, Integer facultyId);
 }

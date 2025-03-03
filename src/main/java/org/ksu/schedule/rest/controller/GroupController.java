@@ -59,8 +59,9 @@ public class GroupController {
     public GroupDto updateGroup(@PathVariable int id,
                                 @RequestParam String number,
                                 @RequestParam String direction,
-                                @RequestParam String profile) {
-        Group group = groupService.updateGroup(id, number, direction, profile);
+                                @RequestParam String profile,
+                                @RequestParam Integer facultyId) {
+        Group group = groupService.updateGroup(id, number, direction, profile, facultyId);
         return GroupDto.toDto(group);
     }
 
@@ -111,5 +112,13 @@ public class GroupController {
     @GetMapping("/batches/number/{number}")
     public GroupDto getGroupByNumber(@PathVariable String number) {
         return GroupDto.toDto(groupService.getByNumber(number));
+    }
+
+    @GetMapping("/batches/faculty/name/{name}")
+    public List<GroupDto> getGroupByFaculty(@PathVariable String name) {
+        return groupService.getByFacultyName(name)
+                .stream()
+                .map(GroupDto::toDto)
+                .collect(Collectors.toList());
     }
 }

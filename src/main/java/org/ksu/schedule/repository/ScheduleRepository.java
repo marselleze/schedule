@@ -1,7 +1,10 @@
 package org.ksu.schedule.repository;
 
+import jakarta.transaction.Transactional;
 import org.ksu.schedule.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -112,4 +115,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
      * @return список расписаний
      */
     List<Schedule> findBySubgroupNumberAndSubjectName(String subgroup_number, String subject_name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM schedule", nativeQuery = true)
+    void truncateSchedule();
 }

@@ -149,4 +149,6 @@ public interface ScheduleService {
      * @return список расписаний
      */
     List<Schedule> getBySubgroupNumberAndSubjectName(String subgroup_number, String subjectName);
+
+    void clearScheduleTable();
 }

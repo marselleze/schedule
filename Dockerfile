@@ -1,11 +1,11 @@
-# Используем официальный образ OpenJDK 17
-FROM openjdk:17-slim
+# Используем официальный образ OpenJDK
+FROM openjdk:17-jdk-slim
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем JAR-файл в контейнер
-COPY target/schedule-0.3.8.jar /app/my-app.jar
+# Копируем jar файл в контейнер
+COPY target/schedule-1.1.6.jar schedule-1.1.6.jar
 
-# Указываем команду для запуска приложения
-ENTRYPOINT ["java", "-jar", "/app/my-app.jar"]
+# Запускаем приложение
+ENTRYPOINT ["java", "-jar", "schedule.jar"]

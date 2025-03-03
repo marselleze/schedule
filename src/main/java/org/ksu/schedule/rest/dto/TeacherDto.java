@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ksu.schedule.domain.Faculty;
 import org.ksu.schedule.domain.Photo;
 import org.ksu.schedule.domain.Teacher;
 
@@ -23,6 +24,7 @@ public class TeacherDto {
     private int id;
     private String name;
     private String post;
+    private Faculty faculty;
 
 
     /**
@@ -35,7 +37,8 @@ public class TeacherDto {
         return new TeacherDto(
                 teacher.getId(),
                 teacher.getName(),
-                teacher.getPost());
+                teacher.getPost(),
+                teacher.getFaculty());
     }
 
     /**
@@ -48,7 +51,7 @@ public class TeacherDto {
         return new Teacher(
                 teacherDto.getId(),
                 teacherDto.getName(),
-                teacherDto.getPost()
-        );
+                teacherDto.getPost(),
+                teacherDto.getFaculty());
     }
 }

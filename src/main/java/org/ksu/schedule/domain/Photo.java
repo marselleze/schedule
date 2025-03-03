@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  * @version 1.0
  * @author Егор Гришанов
  */
-@Entity
+@Entity(name = "Photo")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

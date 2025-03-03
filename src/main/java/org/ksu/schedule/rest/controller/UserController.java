@@ -3,6 +3,7 @@ package org.ksu.schedule.rest.controller;
 import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.User;
 import org.ksu.schedule.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +50,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.updateStudent(email, lastName, firstName, middleName));
     }
 
+
+
     /**
      * Обновить информацию преподавателя.
      *
@@ -67,5 +70,24 @@ public class UserController {
                                                         @RequestParam String info) {
         return ResponseEntity.ok().body(userService.updateTeacher(email, lastName, firstName, middleName, info));
     }
-    
+
+    @GetMapping("/user/teacher/fullName")
+    public ResponseEntity<User> getTeacherByFullName(
+            @RequestParam("fullName") String fullName) {
+        User user = userService.findUserByFullName(fullName);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PutMapping ("/user/update/student/groups/{email}")
+    public ResponseEntity<Optional<User>> updateStudentGroups(@PathVariable String email,
+                                                        @RequestParam String groupNumber,
+                                                        @RequestParam String subgroupNumber, @RequestParam String facultyName) {
+        return ResponseEntity.ok().body(userService.updateStudentGroupAndFaculty(email, groupNumber, subgroupNumber, facultyName));
+    }
+
+
 }

@@ -204,4 +204,9 @@ public class ScheduleController {
         Schedule schedule = scheduleService.insert(id, parity, subgroup_id, subject_id, teacher_id, dayWeek, timeStart, timeEnd, classroom);
         return ScheduleDto.toDto(schedule);
     }
+
+    @PostMapping("/clear")
+    public void clearSchedule() {
+        scheduleService.clearScheduleTable();
+    }
 }

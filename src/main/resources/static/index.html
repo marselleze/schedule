@@ -151,7 +151,6 @@
             // При успешной авторизации сохраняем токен в localStorage
             localStorage.setItem("token", data.token);
 
-
             // Закрываем модальное окно авторизации и показываем форму загрузки файла
             closeModal();
             document.getElementById('uploadForm').style.display = 'block';
@@ -190,6 +189,7 @@
 
         if (!accessToken) {
             alert('Необходимо авторизоваться для загрузки файла.');
+            openModal();
             return;
         }
 
@@ -208,16 +208,24 @@
             });
 
             if (!response.ok) {
-                throw new Error('Ошибка загрузки файла');
+                if (response.status === 401 || response.status === 403) {
+                    // Токен истек или недействителен, запрашиваем повторную авторизацию
+                    alert('Ваша сессия истекла или вы не авторизованы. Пожалуйста, войдите снова.');
+                    openModal();
+                } else {
+                    throw new Error('Ошибка загрузки файла');
+                }
+            } else {
+                alert('Файл(ы) успешно отправлен(ы)!');
+                window.location.href = '/';
             }
-
-            alert('Файл(ы) успешно отправлен(ы)!');
-            window.location.href = '/';
 
         } catch (error) {
             alert('Ошибка загрузки файла: ' + error.message);
         }
     });
+
+
 </script>
 </body>
 </html>

@@ -45,4 +45,8 @@ public interface UserService {
 
 
     void updatePassword(User user, String newPassword);
+
+    Optional<User> updateStudentGroupAndFaculty(String email, String groupName, String subgroupName, String facultyName);
+
+    User findUserByFullName(String fullName);
 }

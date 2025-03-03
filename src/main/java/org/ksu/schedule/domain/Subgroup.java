@@ -1,5 +1,6 @@
 package org.ksu.schedule.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,8 +43,11 @@ public class Subgroup {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToMany(mappedBy = "subgroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Schedule> schedules;
+    @Column(name = "size")
+    private int size;
+
+    //@OneToMany(mappedBy = "subgroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Schedule> schedules;
 
 
     /**

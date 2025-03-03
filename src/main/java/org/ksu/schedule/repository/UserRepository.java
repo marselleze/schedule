@@ -24,4 +24,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional с пользователем
      */
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u WHERE u.lastName = :lastName " +
+            "AND u.firstName LIKE CONCAT(:firstInitial, '%') " +
+            "AND u.middleName LIKE CONCAT(:middleInitial, '%')")
+    Optional<User> findByLastNameAndInitials(@Param("lastName") String lastName,
+                                             @Param("firstInitial") String firstInitial,
+                                             @Param("middleInitial") String middleInitial);
+
 }

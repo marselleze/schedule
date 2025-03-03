@@ -73,6 +73,8 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                     String teacherPost = "";
                     String weekView = "";
                     String numAuditorium = "";
+                    String facultyFull = "";
+                    String facultyReduc = "";
 
                     //Счётчик листов
                     for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
@@ -82,7 +84,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                         XSSFSheet sheet = workbook.getSheetAt(numSheet);
                         //вывод кол-во подгрупп
                         //System.out.println(countSubGroups(sheet));
-                        ////// Чтение используя for //////
+                        ////// Чтение используя for //////\
 
                         // Создаём переменную хронящую номер последний строки(кол-во строк)
                         int rows = skipLowRows(sheet);
@@ -94,21 +96,119 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                         //int indexFirstAuditCell = 0;
                         //Создаём переменную, номера подгруппы, для проходки по столбцам
                         int numSubGroup = 1;
+                        //переменная numSubGroup для определения номера группы
+                        int numSubGroupForNumGroup = 2;
                         //Разбиваем направление
                         int indexProf = 0;
+
+                        //Получаем факультет
+                        for (int r = 0; r < rows; r++) {
+                            if (!(facultyReduc.isEmpty() && facultyFull.isEmpty())){
+                                break;
+                            }
+                            //Получаем строку номера r
+                            XSSFRow row = sheet.getRow(r);
+                            for (int c = 0; c < cols; c++) {
+                                //Получаем ячейку номер с
+                                XSSFCell cell = row.getCell(c);
+
+                                if (!fullCell(cell)){
+                                    continue;
+                                }
+
+                                if (cell.getStringCellValue().contains("акультет") || cell.getStringCellValue().contains("олледж") || cell.getStringCellValue().contains("нститут")) {
+                                    //Присвоение полного названия факультета
+                                    facultyFull = cell.getStringCellValue();
+                                    //Перевод в сокращение
+                                    if (facultyFull.contains("ефектологический")) {
+                                        facultyFull = "Дефектологический факультет";
+                                        facultyReduc = "ДЕФ";
+                                        break;
+                                    } else if (facultyFull.contains("стественно-географич")) {
+                                        facultyFull = "Естественно-географический факультет";
+                                        facultyReduc = "ЕГФ";
+                                        break;
+                                    } else if (facultyFull.contains("ндустриально-педагогич")) {
+                                        facultyFull = "Индустриально-педагогический факультет";
+                                        facultyReduc = "ИПФ";
+                                        break;
+                                    } else if (facultyFull.contains("сторич")) {
+                                        facultyFull = "Исторический факультет";
+                                        facultyReduc = "ИСТ";
+                                        break;
+                                    } else if (facultyFull.contains("коммерции, технологий и сервиса")) {
+                                        facultyFull = "Колледж коммерции, технологий и сервиса";
+                                        facultyReduc = "ККТС";
+                                        break;
+                                    } else if (facultyFull.contains("иностранных язык")) {
+                                        facultyFull = "Факультет иностранных языков";
+                                        facultyReduc = "ФИЯ";
+                                        break;
+                                    } else if (facultyFull.contains("искусств и арт-педагогики")) {
+                                        facultyFull = "Факультет искусств и арт-педагогики";
+                                        facultyReduc = "ФИАП";
+                                        break;
+                                    } else if (facultyFull.contains("педагогики и психологии")) {
+                                        facultyFull = "Факультет педагогики и психологии";
+                                        facultyReduc = "ПИП";
+                                        break;
+                                    } else if (facultyFull.contains("теологии и религиоведения")) {
+                                        facultyFull = "Факультет теологии и религиоведения";
+                                        facultyReduc = "ФТиР";
+                                        break;
+                                    } else if (facultyFull.contains("физики, математики, информатики")) {
+                                        facultyFull = "Факультет физики, математики, информатики";
+                                        facultyReduc = "ФМИ";
+                                        break;
+                                    } else if (facultyFull.contains("ФМИ")) {
+                                        facultyReduc = "ФМИ";
+                                        facultyFull = "Факультет физики, математики, информатики";
+                                        break;
+                                    } else if (facultyFull.contains("физической культуры и спорта")) {
+                                        facultyFull = "Факультет физической культуры и спорта";
+                                        facultyReduc = "ФФСК";
+                                        break;
+                                    } else if (facultyFull.contains("философии и социологии")) {
+                                        facultyFull = "Факультет философии и социологии";
+                                        facultyReduc = "ФФС";
+                                        break;
+                                    } else if (facultyFull.contains("экономики и управления")) {
+                                        facultyFull = "Институт экономики и управления";
+                                        facultyReduc = "ИЭУ";
+                                        break;
+                                    } else if (facultyFull.contains("илологичес")) {
+                                        facultyFull = "Филологический факультет";
+                                        facultyReduc = "ФИЛ";
+                                        break;
+                                    } else if (facultyFull.contains("удожественно-графичес")) {
+                                        facultyFull = "Художественно-графический факультет";
+                                        facultyReduc = "ХГФ";
+                                        break;
+                                    } else if (facultyFull.contains("ридичес")) {
+                                        facultyFull = "Юридический факультет";
+                                        facultyReduc = "ЮРФ";
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        //Выводим название факультета и сокращение
+                        System.out.println(facultyFull);
+                        System.out.println(facultyReduc);
+
                         //Разбиваем строку на список
-                        List<String> fullName = new ArrayList<>(List.of(sheet.getRow(skipTopRows(sheet)).getCell(2).getStringCellValue().replace("\n", " ").split(" ")));
+                        List<String> fullName = new ArrayList<>(List.of(sheet.getRow(skipTopRows(sheet))
+                                .getCell(2).getStringCellValue().replace("\n", " ")
+                                .split(" ")));
                         //Удаляем лишние пробелы
-                        fullName.remove("");
-                        //Удаляем лишние переносы строк
-           /* for (int i = 0; i < fullName.size(); i++) {
-                fullName.set(i, fullName.get(i).trim());
-            }*/
+                        while(fullName.contains(""))
+                            fullName.remove("");
 
                         //i - индекс подстроки в списке
                         for (int i = 0; i < fullName.size(); i++) {
                             //Запоминаем индекс вида пары и должности препода
-                            if (fullName.get(i).contains("(")) {
+                            if (fullName.get(i).contains("(профиль")) {
                                 indexProf = i - 1;
                                 break;
                             }
@@ -137,22 +237,6 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                         //Профиль
                         System.out.println(nameProfile);
 
-                        /////Получаем номер группы////
-                        for (int c = 2; c < cols - 1; c += 2){
-
-                            if (!fullCell(sheet.getRow(skipTopRows(sheet) + numRowsAdd).getCell(c)))
-                                continue;
-
-                            String[] fullGroup = sheet.getRow(skipTopRows(sheet) + numRowsAdd).getCell(c).getStringCellValue().split(" ");
-                            String groupAndSub = fullGroup[1];
-                            fullGroup = groupAndSub.split("\\.");
-                            if(!(numGroup.equals(fullGroup[0]))) {
-                                numGroup = fullGroup[0];
-                                //Номер группы
-                                System.out.println(numGroup);
-                            }
-                        }
-
 
                         //r-строки, с-столбцы
                         for (int r = skipTopRows(sheet) + numRowsAdd; r < rows + 1; r++) {
@@ -161,10 +245,10 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                 controlWeekView = r;
 
                             //выходим из цикла если прошлись по всем подгруппам
-                            if(numSubGroup > countSubGroups(sheet))
+                            if (numSubGroup > countSubGroups(sheet))
                                 break;
                             //Если прошлись по всем строкам возвращаемся в первую строку и меняем номер подгруппы
-                            if (r == rows){
+                            if (r == rows) {
                                 r = skipTopRows(sheet) + numRowsAdd;
                                 controlWeekView = skipTopRows(sheet) + numRowsAdd + 1;
                                 numSubGroup++;
@@ -177,25 +261,59 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                             //Получаем строку номера r
                             XSSFRow row = sheet.getRow(r);
                             //Если строка пустая, пропускаем
-                            if (row == null) continue;
+                            if (row == null)
+                                continue;
+
+                            //Костыль для пропуска строки с подписью декана
+                            if (row.getCell(0).getStringCellValue().contains("екан")){
+                                continue;
+                            }
+
+                            /////Получаем номер группы////
+                            if (r == skipTopRows(sheet) + numRowsAdd && numSubGroupForNumGroup <= countSubGroups(sheet) * 2) {
+                                String[] fullGroup = sheet.getRow(skipTopRows(sheet) + numRowsAdd)
+                                        .getCell(numSubGroupForNumGroup)
+                                        .getStringCellValue()
+                                        .split(" ");
+                                String groupAndSub = fullGroup[1];
+                                fullGroup = groupAndSub.split("\\.");
+                                numSubGroupForNumGroup += 2;
+                                if (!(numGroup.equals(fullGroup[0]))) {
+                                    numGroup = fullGroup[0];
+                                    //Номер группы
+                                    System.out.println(numGroup);
+                                }
+                            }
 
                             for (int c = 0; c < cols; c++) {
                                 //Меняем номер ячейки в зависимости от номера подгруппы
-                                if (c == 2 && c != numSubGroup * 2) c = numSubGroup * 2;
+                                if (c == 2 && c != numSubGroup * 2)
+                                    c = numSubGroup * 2;
                                 //Если вышли за пределы подгруппы, выходим из цикла
-                                if (c > numSubGroup * 2) break;
+                                if (c > numSubGroup * 2)
+                                    break;
 
                                 //Получаем ячейку номера c
                                 XSSFCell cell = row.getCell(c);
 
                                 //Проверяем есть ли что-то в ячейке с аудиторией для первой подгруппы, чтобы определить общая пара или нет
-                                if (!fullCell(row.getCell(3)) && !fullCell(row.getCell(4))) genPara = true;
-
+                                if (fullCell(row.getCell(2)) && fullCell(row.getCell(numCols(sheet) - 1))) {
+                                    int countI = 0;
+                                    for (int i = 4; i < cols - 1; i += 2) {
+                                        if (fullCell(row.getCell(i))) {
+                                            countI++;
+                                        }
+                                    }
+                                    if (countI == 0)
+                                        genPara = true;
+                                }
                                 //Меняем значение ячеек с дисциплиной и аудиторией если пара общая
-                                if (genPara && c == numSubGroup * 2) cell = row.getCell(2);
+                                if (genPara && c == numSubGroup * 2)
+                                    cell = row.getCell(2);
 
                                 //Пропускаем если ячейка пустая или внутри неё пробел
-                                if (!fullCell(cell)) continue;
+                                if (!fullCell(cell))
+                                    continue;
 
                                 //Не выводим "Ауд."
                                 if (r == skipTopRows(sheet) + numRowsAdd && cell.getStringCellValue().contains("А")) {
@@ -272,8 +390,16 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                             //Время конца
                                             endTime = fullTime[1];
                                             break;
-                                        case "18.10 – 19.40":
+                                        case "18.10 - 19.40":
                                             time = "18:10 19:40";
+                                            fullTime = time.split(" ");
+                                            //Время начала
+                                            startTime = fullTime[0];
+                                            //Время конца
+                                            endTime = fullTime[1];
+                                            break;
+                                        case "19.50 - 21.20":
+                                            time = "19:50 21:20";
                                             fullTime = time.split(" ");
                                             //Время начала
                                             startTime = fullTime[0];
@@ -298,25 +424,22 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                     int indexView = 0;
                                     int indexPost = 0;
                                     //Заменяем переносы строк
-                                    String fullNameDiscipStr = cell.getStringCellValue().replace("\n", "");
+                                    String fullNameDiscipStr = cell.getStringCellValue().replace("\n", " ");
                                     //Замена вида пары при физ-ре
                                     if (fullNameDiscipStr.contains("(общая физическая подготовка)"))
-                                        fullNameDiscipStr = fullNameDiscipStr.replace("(общая физическая подготовка)", " (ПР) ");
+                                        fullNameDiscipStr = fullNameDiscipStr.replace("(общая физическая подготовка)", "(ПР)");
                                     //Разбиваем строку на список
-                                    List<String> fullNameDiscip = new ArrayList<>(List.of(fullNameDiscipStr.split(" ")));                                    //Удаляем лишние пробелы
-                                    fullNameDiscip.remove("");
-                                    fullNameDiscip.remove(" ");
-                                    //Удаляем лишние переносы строк
-                                    for (int i = 0; i < fullNameDiscip.size(); i++) {
-                                        fullNameDiscip.set(i, fullNameDiscip.get(i).trim());
-                                    }
+                                    List<String> fullNameDiscip = new ArrayList<>(List.of(fullNameDiscipStr.split(" ")));
+                                    //Удаляем лишние пробелы
+                                    while(fullNameDiscip.contains(""))
+                                        fullNameDiscip.remove("");
                                     //i - индекс подстроки в списке
                                     for (int i = 0; i < fullNameDiscip.size(); i++) {
                                         //Запоминаем индекс вида пары и должности препода
                                         if (fullNameDiscip.get(i).contains("(")) {
-                                                indexView = i;
-                                                indexPost = i + 1;
-                                                break;
+                                            indexView = i;
+                                            indexPost = i + 1;
+                                            break;
                                         }
                                     }
                                     if (fullNameDiscip.get(indexPost + 1).contains(".")) {
@@ -352,6 +475,8 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                         teacherFCs = teacherFCs.substring(0, teacherFCs.length() - 1);
                                     //Вывод должности преподователя
                                     teacherPost = fullNameDiscip.get(indexPost);
+                                    if (teacherPost.contains("ст.пр"))
+                                        teacherPost = "ст.пр";
                                     String teacherPostSubStr = teacherPost.substring(teacherPost.length() - 1);
                                     if (teacherPostSubStr.contains("."))
                                         teacherPost = teacherPost.substring(0, teacherPost.length() - 1);
@@ -382,10 +507,10 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                 //Вывод аудитории
                                 if (genPara) {
                                     numAuditorium = String.valueOf(getValue(row.getCell(numCols(sheet) - 1)));
-                                } else numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
+                                } else
+                                    numAuditorium = String.valueOf(getValue(row.getCell(c + 1)));
 
-
-
+                                /*
 
                                 //Следующую строку меняешь на добавление в БД
                                 System.out.println(subGroup);
@@ -408,11 +533,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                 //Аудитория
                                 System.out.println(numAuditorium);
 
-                                logger.info("Удаление расписания по номеру подгруппы: " + subGroup);
-                                //scheduleRepository.deleteBySubgroupId(subgroupRepository.findByNumber(subGroup).getGroup().getId());
-                                //logger.info("Удаление подгрупп по номеру: " + subGroup);
-                                //subgroupRepository.deleteByNumber(subGroup);
-                                scheduleServiceImpl.deleteBySubgroupNumber(subGroup);
+                                 */
 
                                 if (subjectRepository.findByNameAndType(nameDiscipline, disciplineView) != null
                                         && teacherRepository.findByNameAndPost(teacherFCs, teacherPost) != null) {
@@ -420,7 +541,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                     Schedule scheduleTransaction =
                                             Schedule.builder()
                                                     .parity(weekView)
-                                                    .subgroup(subgroupRepository.findByNumber(subGroup))
+                                                    .subgroup(subgroupRepository.findFirstByNumber(subGroup))
                                                     .subject(subjectRepository.findByNameAndType(nameDiscipline, disciplineView))
                                                     .teacher(teacherRepository.findByNameAndPost(teacherFCs, teacherPost))
                                                     .dayWeek(day)
@@ -430,6 +551,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                                                     .build();
 
                                     scheduleTransactions.add(scheduleTransaction);
+                                    logger.info("Создана запись в БД: " + scheduleTransaction.toString());
                                 }
                             }
                             //Пропуск строки для удобства чтения
@@ -442,7 +564,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                 }
             });
             if (!scheduleTransactions.isEmpty()) {
-                scheduleRepository.saveAll(scheduleTransactions);
+                scheduleRepository.saveAllAndFlush(scheduleTransactions);
             }
         }
     }
@@ -481,7 +603,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
             if (!fullCell(cell))
                 continue;
             //С помощью флага пропускаем все строки до строки с "День недели"
-            if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains("Д")) {
+            if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().contains("недел")) {
                 return r;
             }
         }
@@ -506,7 +628,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
             if (!fullCell(cell))
                 continue;
             //Если доходим до строки с "СОГЛАСОВАНО" возвращаем номер этой строки
-            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("Согл"))) {
+            if (cell.getCellType() == CellType.STRING && (cell.getStringCellValue().contains("Дек") || cell.getStringCellValue().contains("огл") || cell.getStringCellValue().contains("ОГЛ"))) {
                 return r;
             }
         }
@@ -521,7 +643,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
         // Переменная для цикла правильного определения столбцов
         int extraCols;
         ///////////////   Цикл   //////////////////
-        for(int i = 0; ;i++) {
+        for (int i = 0; ; i++) {
             //Получаем строку
             XSSFRow row = sheet.getRow(skipTopRows(sheet) + i);
 
@@ -531,7 +653,7 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
                 //Получаем ячейку номера cols
                 XSSFCell cell = row.getCell(extraCols);
 
-                if (extraCols == 0){
+                if (extraCols == 0) {
                     break;
                 }
                 //Пропускаем если ячейка пустая или внутри неё пробел
@@ -548,10 +670,10 @@ public class ScheduleImportServiceImpl implements ScheduleImportService {
     }
 
     //Метод считающий кол-во подгрупп
-    public static int countSubGroups(XSSFSheet sheet){
+    public static int countSubGroups(XSSFSheet sheet) {
         int countSubGroups = 0;
         XSSFRow row = sheet.getRow(skipTopRows(sheet) + numRowsAdd);
-        for (int c = 2; c < numCols(sheet); c += 2){
+        for (int c = 2; c < numCols(sheet); c += 2) {
             //Получаем ячейку номера c
             XSSFCell cell = row.getCell(c);
             if (cell.getStringCellValue().contains("руп"))

@@ -44,7 +44,7 @@ public class JwtAuthenticationService {
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-        Date exp = new Date(nowMillis + 1000 * 60 * 24); // 24 minutes
+        Date exp = new Date(nowMillis + 1000 * 60 * 60 * 24); // 48 hours
 
         return Jwts.builder()
                 .setClaims(extraClaims)
@@ -96,7 +96,7 @@ public class JwtAuthenticationService {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 24 minutes
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 minutes
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

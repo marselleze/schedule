@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -49,8 +50,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/schedule/subgroup/**").hasAuthority("STUDENT")
-                .requestMatchers("/api/v1/schedule/**").hasAuthority("TEACHER")
+                .requestMatchers("/api/v1/schedule/**").hasAnyAuthority("STUDENT", "TEACHER", "ADMIN")
                 .requestMatchers("/api/v1/import/import-excel").hasAuthority("ADMIN")
                 .requestMatchers("/api/v1/user/update/student/").hasAuthority("STUDENT")
                 .requestMatchers("/api/v1/user/update/teacher/").hasAuthority("TEACHER")
@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .rememberMe()
                 .key(secretKey)
                 .tokenRepository(tokenRepository())
-                .tokenValiditySeconds(14 * 24 * 60  * 60)
+                .tokenValiditySeconds(14 * 24 * 60 * 60)
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

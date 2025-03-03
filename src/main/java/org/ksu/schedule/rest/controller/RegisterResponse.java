@@ -5,21 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Ответ на запрос аутентификации.
- *
- * @version 1.0
- * @autor Егор Гришанов
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
+public class RegisterResponse {
 
-    /**
-     * JWT токен.
-     */
     private String token;
 
     private Long id;
