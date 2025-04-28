@@ -39,16 +39,15 @@ public class PasswordResetController {
      */
     @GetMapping("/confirm")
     public String showPasswordResetPage(@RequestParam("token") String token, HttpSession session) {
-        session.setAttribute("resetToken", token);
+        session.setAttribute("token", token);
         return "resetPassword";  // Имя HTML файла
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<?> confirmPasswordReset(HttpSession session, @RequestParam("newPassword") String newPassword) {
-        String token = (String) session.getAttribute("resetToken");
-        if (token == null) {
-            return ResponseEntity.badRequest().body("No reset token found in session.");
-        }
+    public ResponseEntity<?> confirmPasswordReset(
+            @RequestParam("token") String token, // Получаем токен из тела запроса
+            @RequestParam("newPassword") String newPassword
+    ) {
         boolean result = passwordResetService.resetPassword(token, newPassword);
         if (!result) {
             return ResponseEntity.badRequest().body("Invalid or expired token.");
