@@ -2,12 +2,14 @@ package org.ksu.schedule.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.User;
+import org.ksu.schedule.repository.FacultyRepository;
 import org.ksu.schedule.repository.UserRepository;
 import org.ksu.schedule.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -22,6 +24,8 @@ import java.util.logging.Logger;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final FacultyRepository facultyRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -91,5 +95,70 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         logger.info("Password for user {} was updated. Encoded password: {}" + user.getEmail() + encodedPassword);
     }
+
+    @Override
+    public Optional<User> updateStudentGroupAndFaculty(String email, String groupName, String subgroupName, String facultyName) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            user.get().setGroup_number(groupName);
+            user.get().setSubgroup_number(subgroupName);
+            user.get().setFaculty(facultyRepository.findByFacultyName(facultyName));
+            userRepository.save(user.get());
+        }
+        return user;
+    }
+
+    @Override
+    public User findUserByFullName(String fullName) {
+
+
+        // Убираем лишние пробелы и нормализуем ввод
+        fullName = fullName.trim();
+
+
+        // Разделяем ФИО на части
+        String[] nameParts = fullName.split("\\s+");
+
+
+        // Проверяем, что формат соответствует "Фамилия И.О." или "Фамилия И.О."
+        if (nameParts.length < 2 || nameParts.length > 3) {
+            throw new IllegalArgumentException("Полное имя должно содержать две или три части: Фамилия И.О. или Фамилия И.О.");
+        }
+
+        String lastName = nameParts[0];
+        String firstInitial = "";
+        String middleInitial = "";
+
+        if (nameParts.length == 2) {
+            // Если имя и отчество объединены
+            if (nameParts[1].length() != 4 || !nameParts[1].endsWith(".")) {
+                throw new IllegalArgumentException("Имя и отчество должны быть в формате инициалов: И.О.");
+            }
+            firstInitial = nameParts[1].substring(0, 1).toUpperCase();
+            middleInitial = nameParts[1].substring(2, 3).toUpperCase();
+        } else {
+            // Если имя и отчество разделены
+            if (nameParts[1].length() != 2 || nameParts[2].length() != 2) {
+                throw new IllegalArgumentException("Имя и отчество должны быть в формате инициалов: И.О.");
+            }
+            if (!nameParts[1].endsWith(".") || !nameParts[2].endsWith(".")) {
+                throw new IllegalArgumentException("Инициал имени и отчества должны заканчиваться точкой.");
+            }
+            firstInitial = nameParts[1].substring(0, 1).toUpperCase();
+            middleInitial = nameParts[2].substring(0, 1).toUpperCase();
+        }
+
+        // Выполняем поиск в базе данных
+        String finalFullName = fullName;
+        return userRepository.findByLastNameAndInitials(lastName, firstInitial, middleInitial)
+                .orElseThrow(() -> {
+                    return new IllegalArgumentException("Пользователь с ФИО " + finalFullName + " не найден.");
+                });
+    }
+
+
+
+
+
 
 }

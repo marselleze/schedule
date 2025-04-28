@@ -28,7 +28,7 @@
             <column name="number"
                     type="VARCHAR(20)">
                 <constraints nullable="false"
-                             unique="true"/>
+                             unique="false"/>
             </column>
 
             <column name="direction"

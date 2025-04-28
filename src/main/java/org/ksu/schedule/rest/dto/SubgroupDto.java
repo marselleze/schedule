@@ -25,8 +25,7 @@ public class SubgroupDto {
     private int id;
     private String number;
     private GroupDto groupDto;
-    private List<ScheduleDto> schedules;
-
+    private int size;
     /**
      * Преобразует сущность {@link Subgroup} в DTO {@link SubgroupDto}.
      *
@@ -38,11 +37,7 @@ public class SubgroupDto {
                 .id(subgroup.getId())
                 .number(subgroup.getNumber())
                 .groupDto(GroupDto.toDto(subgroup.getGroup()))
-                .schedules(subgroup.getSchedules() != null ?
-                        subgroup.getSchedules().stream()
-                                .map(ScheduleDto::toDto)
-                                .collect(Collectors.toList())
-                        : null)
+                .size(subgroup.getSize())
                 .build();
     }
 
@@ -57,11 +52,7 @@ public class SubgroupDto {
                 .id(subgroupDto.getId())
                 .number(subgroupDto.getNumber())
                 .group(GroupDto.toDomain(subgroupDto.getGroupDto()))
-                .schedules(subgroupDto.getSchedules() != null ?
-                        subgroupDto.getSchedules().stream()
-                                .map(ScheduleDto::toDomain)
-                                .collect(Collectors.toList())
-                        : null)
+                .size(subgroupDto.getSize())
                 .build();
     }
 }

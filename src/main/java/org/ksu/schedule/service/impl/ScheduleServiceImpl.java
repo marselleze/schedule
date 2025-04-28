@@ -1,5 +1,6 @@
 package org.ksu.schedule.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.ksu.schedule.domain.*;
 import org.ksu.schedule.repository.*;
@@ -241,5 +242,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<Schedule> getBySubgroupNumberAndSubjectName(String subgroup_number, String subjectName) {
         return scheduleRepository.findBySubgroupNumberAndSubjectName(subgroup_number, subjectName);
+    }
+
+    @Transactional
+    @Override
+    public void clearScheduleTable() {
+        scheduleRepository.truncateSchedule();
     }
 }

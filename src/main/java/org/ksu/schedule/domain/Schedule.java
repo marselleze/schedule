@@ -1,5 +1,6 @@
 package org.ksu.schedule.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -74,6 +75,8 @@ public class Schedule {
      */
     @Column(name = "classroom")
     private String classroom;
+
+
 
     /**
      * Создает объект расписания на основе текущего состояния.

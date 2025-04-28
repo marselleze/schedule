@@ -61,7 +61,7 @@ public interface GroupService {
      * @param profile профиль группы
      * @return обновленный объект группы
      */
-    Group updateGroup(int id, String number, String direction, String profile);
+    Group updateGroup(int id, String number, String direction, String profile, Integer facultyId);
 
     /**
      * Получает все группы.
@@ -69,4 +69,8 @@ public interface GroupService {
      * @return список всех групп
      */
     List<Group> getAll();
+
+    List<Group> getByFacultyName(String facultyName);
+
+    List<Group> getByFacultyAbb(String facultyAbb);
 }
